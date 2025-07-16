@@ -110,7 +110,7 @@ Plataforma	Fortalezas	Debilidades
 Facebook Marketplace	Alto tráfico	Sin verificación, inseguro
 TuCarro	Establecido	Enfoque en carros, poca innovación
 OLX	Reconocimiento	Experiencia genérica
-MotoMar	Especializado, seguro, innovador	Nuevo en el mercado
+MotoMar	Especializado, seguro, innovador Nuevo en el mercado
 💰 Modelo de Negocio
 Ingresos
 💳 Comisión por transacción: 3% del valor de venta
@@ -132,7 +132,7 @@ UX/UI Designer
 DevOps Engineer
 Customer Success Manager
 📞 Contacto
-Desarrollador Principal: [Tu Nombre]
+Desarrollador Principal: Juan Andres Perez Gallego
 
 📧 Email: juanperezg342@gmail.com
 🔗 LinkedIn: https://www.linkedin.com/in/juan-andres-perez-24b962374/
