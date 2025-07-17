@@ -74,7 +74,11 @@ import authRoutes from './routes/auth';
 app.use('/api/auth', authRoutes);
 
 // app.use('/api/users', userRoutes);
-// app.use('/api/motos', motosRoutes);
+
+// app.use('/api/motos', motosRoutes); -- ya importada--
+import motosRoutes from './routes/motos';
+app.use('/api/motos', motosRoutes);
+
 // app.use('/api/chat', chatRoutes);
 // app.use('/api/transactions', transactionRoutes);
 
