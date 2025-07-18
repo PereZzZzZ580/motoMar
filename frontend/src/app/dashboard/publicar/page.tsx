@@ -166,7 +166,7 @@ export default function PublicarMotoPage() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Sección de Imágenes */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white text-gray-400 rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Imágenes</h2>
           
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -210,7 +210,7 @@ export default function PublicarMotoPage() {
         </div>
 
         {/* Información Básica */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white text-gray-400 rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Información Básica</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -312,7 +312,7 @@ export default function PublicarMotoPage() {
         </div>
 
         {/* Especificaciones Técnicas */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white text-gray-400 rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Especificaciones Técnicas</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -414,7 +414,7 @@ export default function PublicarMotoPage() {
         </div>
 
         {/* Documentación */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white text-gray-400 rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Documentación</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -462,7 +462,7 @@ export default function PublicarMotoPage() {
         </div>
 
         {/* Ubicación y Contacto */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white text-gray-400 rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Ubicación y Contacto</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
