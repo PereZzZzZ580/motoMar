@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
+import { Response } from 'express';
 
 interface Moto {
   id: string;
@@ -32,7 +33,7 @@ interface Moto {
   precio_negociable: boolean;
   estado: string;
   createdAt: string;
-  usuario: {
+  vendedor: {
     id: string;
     nombre: string;
     apellido: string;
@@ -58,6 +59,7 @@ interface Moto {
 export default function MotoDetallePage() {
   const params = useParams();
   const router = useRouter();
+  const motoId = params.id as string;
   const [moto, setMoto] = useState<Moto | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -65,10 +67,17 @@ export default function MotoDetallePage() {
   const [showContactInfo, setShowContactInfo] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
+ // useEffect(() => {
+   // if (motoId){
+    //fetchMoto();
+    //checkCurrentUser();
+    //}    
+  //}, [motoId]);
   useEffect(() => {
-    fetchMoto();
-    checkCurrentUser();
-  }, [params.id]);
+    if (!moto?.imagenes || moto.imagenes.length === 0) {
+      setSelectedImage(0);
+    }
+  }, [moto]);
 
   const checkCurrentUser = async () => {
     try {
@@ -81,8 +90,11 @@ export default function MotoDetallePage() {
 
   const fetchMoto = async () => {
     try {
-      const response = await api.get(`/motos/${params.id}`);
-      setMoto(response.data);
+      const response = await api.get(`/motos/${motoId}`);
+      console.log('Response from API:', response);
+      console.log('Response data:', response.data);
+
+      setMoto(response.data.moto);
       setIsFavorite(response.data.es_favorito || false);
       
       // Incrementar visitas
@@ -160,7 +172,7 @@ export default function MotoDetallePage() {
     );
   }
 
-  const isOwner = userId === moto.usuario.id;
+  const isOwner = userId === moto.vendedor?.id;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -184,16 +196,16 @@ export default function MotoDetallePage() {
               {/* Imagen principal */}
               <div className="relative h-96 bg-gray-100">
                 <img
-                  src={moto.imagenes[selectedImage]?.url || 'https://via.placeholder.com/800x600?text=Sin+Imagen'}
+                  src={(moto.imagenes && moto.imagenes[selectedImage]?.url) || 'https://via.placeholder.com/800x600?text=Sin+Imagen'}
                   alt={moto.titulo}
                   className="w-full h-full object-contain"
                 />
                 
                 {/* Navegación de imágenes */}
-                {moto.imagenes.length > 1 && (
+                {moto.imagenes && moto.imagenes.length > 1 && (
                   <>
                     <button
-                      onClick={() => setSelectedImage(prev => prev > 0 ? prev - 1 : moto.imagenes.length - 1)}
+                      onClick={() => setSelectedImage(prev => prev > 0 ? prev - 1 : (moto.imagenes?.length || 1) - 1)}
                       className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
                     >
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -201,7 +213,7 @@ export default function MotoDetallePage() {
                       </svg>
                     </button>
                     <button
-                      onClick={() => setSelectedImage(prev => prev < moto.imagenes.length - 1 ? prev + 1 : 0)}
+                      onClick={() => setSelectedImage(prev => prev < (moto.imagenes?.length || 1) - 1 ? prev + 1 : 0)}
                       className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
                     >
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -222,7 +234,7 @@ export default function MotoDetallePage() {
               </div>
 
               {/* Miniaturas */}
-              {moto.imagenes.length > 1 && (
+              {moto.imagenes && moto.imagenes.length > 1 && (
                 <div className="flex overflow-x-auto gap-2 p-4">
                   {moto.imagenes.map((img, index) => (
                     <button
@@ -406,8 +418,8 @@ export default function MotoDetallePage() {
               {showContactInfo && !isOwner && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-semibold mb-2">Información de contacto:</h4>
-                  <p className="text-sm text-gray-700">Teléfono: {moto.usuario.telefono || 'No disponible'}</p>
-                  <p className="text-sm text-gray-700">Email: {moto.usuario.email}</p>
+                  <p className="text-sm text-gray-700">Teléfono: {moto.vendedor.telefono || 'No disponible'}</p>
+                  <p className="text-sm text-gray-700">Email: {moto.vendedor.email}</p>
                   {moto.whatsapp && (
                     <p className="text-sm text-gray-700">WhatsApp: {moto.whatsapp}</p>
                   )}
@@ -421,25 +433,25 @@ export default function MotoDetallePage() {
               
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-lg">
-                  {moto.usuario.nombre.charAt(0)}
+                  {moto.vendedor.nombre.charAt(0)}
                 </div>
                 <div className="ml-3">
-                  <p className="font-semibold">{moto.usuario.nombre} {moto.usuario.apellido}</p>
+                  <p className="font-semibold">{moto.vendedor.nombre} {moto.vendedor.apellido}</p>
                   <div className="flex items-center text-sm text-gray-600">
                     <span className="text-yellow-500">★</span>
-                    <span className="ml-1">{moto.usuario.calificacion_promedio.toFixed(1)}/5.0</span>
+                    <span className="ml-1">{moto.vendedor.calificacion_promedio.toFixed(1)}/5.0</span>
                   </div>
                 </div>
               </div>
 
               <div className="text-sm text-gray-600">
-                <p>{moto.usuario._count.motos_vendidas} motos vendidas</p>
+                <p>{moto.vendedor._count.motos_vendidas} motos vendidas</p>
                 <p>Miembro desde {formatDate(moto.createdAt)}</p>
               </div>
 
               {!isOwner && (
                 <Link
-                  href={`/vendedor/${moto.usuario.id}`}
+                  href={`/vendedor/${moto.vendedor.id}`}
                   className="mt-4 block text-center text-indigo-600 hover:text-indigo-700 font-semibold"
                 >
                   Ver perfil del vendedor

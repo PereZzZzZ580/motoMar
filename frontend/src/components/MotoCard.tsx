@@ -19,7 +19,7 @@ interface Moto {
   departamento: string;
   estado: string;
   imagenes: { url: string }[];
-  usuario: {
+  vendedor: {
     nombre: string;
     apellido: string;
     calificacion_promedio: number;
@@ -134,13 +134,13 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
           <div className="flex items-center text-sm">
             <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold text-xs">
-              {moto.usuario?.nombre?.charAt(0) || 'U'}
+              {moto.vendedor?.nombre?.charAt(0) || 'U'}
             </div>
             <span className="ml-2 text-gray-700">
-              {moto.usuario?.nombre || 'Usuario'} {moto.usuario?.apellido || ''}
+              {moto.vendedor?.nombre || 'Usuario'} {moto.vendedor?.apellido || ''}
             </span>
             <span className="ml-2 text-yellow-500">
-              ⭐ {moto.usuario?.calificacion_promedio?.toFixed(1) || '0.0'}
+              ⭐ {moto.vendedor?.calificacion_promedio?.toFixed(1) || '0.0'}
             </span>
           </div>
           

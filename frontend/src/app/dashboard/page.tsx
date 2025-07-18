@@ -19,7 +19,7 @@ interface Moto {
   departamento: string;
   estado: string;
   imagenes: { url: string }[];
-  usuario: {
+  vendedor: {
     nombre: string;
     apellido: string;
     calificacion_promedio: number;
