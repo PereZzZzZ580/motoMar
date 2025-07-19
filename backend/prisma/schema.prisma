@@ -1,5 +1,3 @@
-// prisma/schema.prisma - Esquema completo de MotoMar
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,56 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ================================
-// MODELOS DE USUARIOS Y AUTH
-// ================================
-
 model Usuario {
-  id                String   @id @default(cuid())
-  email             String   @unique
-  telefono          String?  @unique
-  password          String
-  nombre            String
-  apellido          String
-  cedula            String?  @unique
-  fechaNacimiento   DateTime?
-  avatar            String?
-  
-  // Verificación
-  emailVerificado   Boolean  @default(false)
-  telefonoVerificado Boolean @default(false)
-  cedulaVerificada  Boolean  @default(false)
-  
-  // Ubicación
-  ciudad            String?
-  departamento      String?
-  direccion         String?
-  
-  // Sistema de reputación
-  calificacion      Float    @default(0.0)
-  totalVentas       Int      @default(0)
-  totalCompras      Int      @default(0)
-  
-  // Metadata
-  activo            Boolean  @default(true)
-  ultimoAcceso      DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  // Relaciones
-  motosPublicadas   Moto[]   @relation("VendedorMotos")
-  transaccionesVendedor Transaccion[] @relation("VendedorTransacciones")
-  transaccionesComprador Transaccion[] @relation("CompradorTransacciones")
-  mensajesEnviados  Mensaje[] @relation("MensajesEnviados")
-  mensajesRecibidos Mensaje[] @relation("MensajesRecibidos")
-  conversacionesInicializadas Conversacion[] @relation("UsuarioIniciador")
-  conversacionesRecibidas Conversacion[] @relation("UsuarioReceptor")
-  calificacionesHechas Calificacion[] @relation("CalificadorUsuario")
-  calificacionesRecibidas Calificacion[] @relation("CalificadoUsuario")
-  favoritosMoto     FavoritoMoto[]
-  reportes          Reporte[]
-  sesiones          SesionUsuario[]
-  
+  id                          String          @id @default(cuid())
+  email                       String          @unique
+  telefono                    String?         @unique
+  password                    String
+  nombre                      String
+  apellido                    String
+  cedula                      String?         @unique
+  fechaNacimiento             DateTime?
+  avatar                      String?
+  emailVerificado             Boolean         @default(false)
+  telefonoVerificado          Boolean         @default(false)
+  cedulaVerificada            Boolean         @default(false)
+  ciudad                      String?
+  departamento                String?
+  direccion                   String?
+  calificacion                Float           @default(0.0)
+  totalVentas                 Int             @default(0)
+  totalCompras                Int             @default(0)
+  activo                      Boolean         @default(true)
+  ultimoAcceso                DateTime?
+  createdAt                   DateTime        @default(now())
+  updatedAt                   DateTime        @updatedAt
+  calificacionesRecibidas     Calificacion[]  @relation("CalificadoUsuario")
+  calificacionesHechas        Calificacion[]  @relation("CalificadorUsuario")
+  conversacionesInicializadas Conversacion[]  @relation("UsuarioIniciador")
+  conversacionesRecibidas     Conversacion[]  @relation("UsuarioReceptor")
+  favoritosMoto               FavoritoMoto[]
+  mensajesRecibidos           Mensaje[]       @relation("MensajesRecibidos")
+  mensajesEnviados            Mensaje[]       @relation("MensajesEnviados")
+  motosPublicadas             Moto[]          @relation("VendedorMotos")
+  reportes                    Reporte[]
+  sesiones                    SesionUsuario[]
+  transaccionesComprador      Transaccion[]   @relation("CompradorTransacciones")
+  transaccionesVendedor       Transaccion[]   @relation("VendedorTransacciones")
+
   @@map("usuarios")
 }
 
@@ -66,337 +50,236 @@ model SesionUsuario {
   id        String   @id @default(cuid())
   token     String   @unique
   usuarioId String
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   activa    Boolean  @default(true)
   ipAddress String?
   userAgent String?
   createdAt DateTime @default(now())
   expiresAt DateTime
-  
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
   @@map("sesiones_usuario")
 }
 
-// ================================
-// MODELOS DE MOTOCICLETAS
-// ================================
-
 model Moto {
-  id              String   @id @default(cuid())
+  id              String          @id @default(cuid())
   titulo          String
   descripcion     String
-  precio          Decimal  @db.Decimal(12, 2)
-  negociable      Boolean  @default(true)
-  
-  // Especificaciones técnicas
+  precio          Decimal         @db.Decimal(12, 2)
+  negociable      Boolean         @default(true)
   marca           String
   modelo          String
-  año             Int
+  año            Int
   cilindraje      Int
   kilometraje     Int
   color           String
   combustible     TipoCombustible @default(GASOLINA)
   transmision     TipoTransmision @default(MANUAL)
-  
-  // Estado y condición
-  estado          EstadoMoto @default(USADO)
-  condicion       CondicionMoto @default(BUENA)
-  
-  // Documentación
-  soatVigente     Boolean  @default(false)
-  tecnoVigente    Boolean  @default(false)
-  papalesAlDia    Boolean  @default(false)
-  
-  // Características adicionales
+  estado          EstadoMoto      @default(USADO)
+  condicion       CondicionMoto   @default(BUENA)
+  soatVigente     Boolean         @default(false)
+  tecnoVigente    Boolean         @default(false)
+  papalesAlDia    Boolean         @default(false)
   frenos          TipoFreno?
   llantas         EstadoLlantas?
   mantenimiento   String?
   accesorios      String?
-  
-  // Ubicación
   ciudad          String
   departamento    String
   barrio          String?
-  
-  // Fotos y media
-  imagenes        ImagenMoto[]
   imagenPrincipal String?
-  
-  // Metadata
-  activa          Boolean  @default(true)
-  vendida         Boolean  @default(false)
-  destacada       Boolean  @default(false)
-  views           Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  // Relaciones
+  activa          Boolean         @default(true)
+  vendida         Boolean         @default(false)
+  destacada       Boolean         @default(false)
+  views           Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
   vendedorId      String
-  vendedor        Usuario  @relation("VendedorMotos", fields: [vendedorId], references: [id], onDelete: Cascade)
-  transacciones   Transaccion[]
   conversaciones  Conversacion[]
   favoritos       FavoritoMoto[]
+  imagenes        ImagenMoto[]
+  vendedor        Usuario         @relation("VendedorMotos", fields: [vendedorId], references: [id], onDelete: Cascade)
   reportes        Reporte[]
-  
+  transacciones   Transaccion[]
+
   @@map("motos")
 }
 
 model ImagenMoto {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   url       String
   alt       String?
-  orden     Int    @default(0)
+  orden     Int      @default(0)
   motoId    String
-  moto      Moto   @relation(fields: [motoId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  
+  moto      Moto     @relation(fields: [motoId], references: [id], onDelete: Cascade)
+
   @@map("imagenes_moto")
 }
-
-// ================================
-// SISTEMA DE TRANSACCIONES
-// ================================
 
 model Transaccion {
   id                String            @id @default(cuid())
   codigo            String            @unique
-  
-  // Participantes
   vendedorId        String
-  vendedor          Usuario           @relation("VendedorTransacciones", fields: [vendedorId], references: [id])
   compradorId       String
-  comprador         Usuario           @relation("CompradorTransacciones", fields: [compradorId], references: [id])
   motoId            String
-  moto              Moto              @relation(fields: [motoId], references: [id])
-  
-  // Montos
   precioFinal       Decimal           @db.Decimal(12, 2)
   comisionApp       Decimal           @db.Decimal(8, 2)
   comisionPago      Decimal           @db.Decimal(8, 2)
-  
-  // Estados y fechas
   estado            EstadoTransaccion @default(PENDIENTE)
   fechaAcuerdo      DateTime?
   fechaPago         DateTime?
   fechaEntrega      DateTime?
   fechaTraspaso     DateTime?
   fechaFinalizacion DateTime?
-  
-  // Información de pago
   metodoPago        MetodoPago?
   referenciaGateway String?
-  
-  // Información de entrega
   lugarEncuentro    String?
   coordenadasLat    Float?
   coordenadasLng    Float?
-  
-  // Trámites
-  tramiteRunt       TramiteRunt?
   costoTraspaso     Decimal?          @db.Decimal(8, 2)
-  
-  // Metadata
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
-  
-  // Relaciones
+  calificaciones    Calificacion[]
   conversacion      Conversacion?
   pagos             Pago[]
-  calificaciones    Calificacion[]
-  
+  tramiteRunt       TramiteRunt?
+  comprador         Usuario           @relation("CompradorTransacciones", fields: [compradorId], references: [id])
+  moto              Moto              @relation(fields: [motoId], references: [id])
+  vendedor          Usuario           @relation("VendedorTransacciones", fields: [vendedorId], references: [id])
+
   @@map("transacciones")
 }
 
 model Pago {
-  id              String      @id @default(cuid())
-  transaccionId   String
-  transaccion     Transaccion @relation(fields: [transaccionId], references: [id])
-  
-  monto           Decimal     @db.Decimal(12, 2)
-  metodoPago      MetodoPago
-  estado          EstadoPago  @default(PENDIENTE)
-  
-  // Gateway de pago
-  gatewayId       String?
+  id                String      @id @default(cuid())
+  transaccionId     String
+  monto             Decimal     @db.Decimal(12, 2)
+  metodoPago        MetodoPago
+  estado            EstadoPago  @default(PENDIENTE)
+  gatewayId         String?
   referenciaExterna String?
-  
-  // Metadata
-  createdAt       DateTime    @default(now())
-  procesadoAt     DateTime?
-  
+  createdAt         DateTime    @default(now())
+  procesadoAt       DateTime?
+  transaccion       Transaccion @relation(fields: [transaccionId], references: [id])
+
   @@map("pagos")
 }
 
 model TramiteRunt {
-  id              String            @id @default(cuid())
-  transaccionId   String            @unique
-  transaccion     Transaccion       @relation(fields: [transaccionId], references: [id])
-  
-  estado          EstadoTramite     @default(PENDIENTE)
-  fechaCita       DateTime?
-  lugarCita       String?
-  
-  // Documentos
-  formularioLleno Boolean           @default(false)
-  improntasTomadas Boolean          @default(false)
-  pagosRealizados Boolean           @default(false)
-  
-  // Metadata
-  createdAt       DateTime          @default(now())
-  completadoAt    DateTime?
-  
+  id               String        @id @default(cuid())
+  transaccionId    String        @unique
+  estado           EstadoTramite @default(PENDIENTE)
+  fechaCita        DateTime?
+  lugarCita        String?
+  formularioLleno  Boolean       @default(false)
+  improntasTomadas Boolean       @default(false)
+  pagosRealizados  Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  completadoAt     DateTime?
+  transaccion      Transaccion   @relation(fields: [transaccionId], references: [id])
+
   @@map("tramites_runt")
 }
 
-// ================================
-// SISTEMA DE COMUNICACIÓN
-// ================================
-
 model Conversacion {
-  id              String   @id @default(cuid())
-  
-  // Participantes
+  id                 String       @id @default(cuid())
   usuarioIniciadorId String
-  usuarioIniciador Usuario @relation("UsuarioIniciador", fields: [usuarioIniciadorId], references: [id])
-  usuarioReceptorId String
-  usuarioReceptor Usuario  @relation("UsuarioReceptor", fields: [usuarioReceptorId], references: [id])
-  
-  // Contexto
-  motoId          String
-  moto            Moto     @relation(fields: [motoId], references: [id])
-  transaccionId   String?  @unique
-  transaccion     Transaccion? @relation(fields: [transaccionId], references: [id])
-  
-  // Estado
-  activa          Boolean  @default(true)
-  bloqueada       Boolean  @default(false)
-  
-  // Metadata
-  ultimoMensajeAt DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  // Relaciones
-  mensajes        Mensaje[]
-  ofertas         Oferta[]
-  
+  usuarioReceptorId  String
+  motoId             String
+  transaccionId      String?      @unique
+  activa             Boolean      @default(true)
+  bloqueada          Boolean      @default(false)
+  ultimoMensajeAt    DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  moto               Moto         @relation(fields: [motoId], references: [id])
+  transaccion        Transaccion? @relation(fields: [transaccionId], references: [id])
+  usuarioIniciador   Usuario      @relation("UsuarioIniciador", fields: [usuarioIniciadorId], references: [id])
+  usuarioReceptor    Usuario      @relation("UsuarioReceptor", fields: [usuarioReceptorId], references: [id])
+  mensajes           Mensaje[]
+  ofertas            Oferta[]
+
   @@unique([usuarioIniciadorId, usuarioReceptorId, motoId])
   @@map("conversaciones")
 }
 
 model Mensaje {
-  id              String       @id @default(cuid())
-  contenido       String
-  tipo            TipoMensaje  @default(TEXTO)
-  
-  // Participantes
-  remitenteId     String
-  remitente       Usuario      @relation("MensajesEnviados", fields: [remitenteId], references: [id])
-  destinatarioId  String
-  destinatario    Usuario      @relation("MensajesRecibidos", fields: [destinatarioId], references: [id])
-  
-  // Conversación
-  conversacionId  String
-  conversacion    Conversacion @relation(fields: [conversacionId], references: [id], onDelete: Cascade)
-  
-  // Estados
-  leido           Boolean      @default(false)
-  fechaLectura    DateTime?
-  
-  // Adjuntos
-  archivoUrl      String?
-  archivoTipo     String?
-  
-  // Metadata
-  createdAt       DateTime     @default(now())
-  
+  id             String       @id @default(cuid())
+  contenido      String
+  tipo           TipoMensaje  @default(TEXTO)
+  remitenteId    String
+  destinatarioId String
+  conversacionId String
+  leido          Boolean      @default(false)
+  fechaLectura   DateTime?
+  archivoUrl     String?
+  archivoTipo    String?
+  createdAt      DateTime     @default(now())
+  conversacion   Conversacion @relation(fields: [conversacionId], references: [id], onDelete: Cascade)
+  destinatario   Usuario      @relation("MensajesRecibidos", fields: [destinatarioId], references: [id])
+  remitente      Usuario      @relation("MensajesEnviados", fields: [remitenteId], references: [id])
+
   @@map("mensajes")
 }
 
 model Oferta {
-  id              String       @id @default(cuid())
-  monto           Decimal      @db.Decimal(12, 2)
-  mensaje         String?
-  estado          EstadoOferta @default(PENDIENTE)
-  
-  conversacionId  String
-  conversacion    Conversacion @relation(fields: [conversacionId], references: [id], onDelete: Cascade)
-  
-  // Fechas
-  validaHasta     DateTime?
-  createdAt       DateTime     @default(now())
-  respondidaAt    DateTime?
-  
+  id             String       @id @default(cuid())
+  monto          Decimal      @db.Decimal(12, 2)
+  mensaje        String?
+  estado         EstadoOferta @default(PENDIENTE)
+  conversacionId String
+  validaHasta    DateTime?
+  createdAt      DateTime     @default(now())
+  respondidaAt   DateTime?
+  conversacion   Conversacion @relation(fields: [conversacionId], references: [id], onDelete: Cascade)
+
   @@map("ofertas")
 }
 
-// ================================
-// SISTEMA DE CALIFICACIONES
-// ================================
-
 model Calificacion {
-  id              String      @id @default(cuid())
-  puntuacion      Int         // 1-5 estrellas
-  comentario      String?
-  tipo            TipoCalificacion
-  
-  // Participantes
-  calificadorId   String
-  calificador     Usuario     @relation("CalificadorUsuario", fields: [calificadorId], references: [id])
-  calificadoId    String
-  calificado      Usuario     @relation("CalificadoUsuario", fields: [calificadoId], references: [id])
-  
-  // Contexto
-  transaccionId   String
-  transaccion     Transaccion @relation(fields: [transaccionId], references: [id])
-  
-  // Metadata
-  createdAt       DateTime    @default(now())
-  
+  id            String           @id @default(cuid())
+  puntuacion    Int
+  comentario    String?
+  tipo          TipoCalificacion
+  calificadorId String
+  calificadoId  String
+  transaccionId String
+  createdAt     DateTime         @default(now())
+  calificado    Usuario          @relation("CalificadoUsuario", fields: [calificadoId], references: [id])
+  calificador   Usuario          @relation("CalificadorUsuario", fields: [calificadorId], references: [id])
+  transaccion   Transaccion      @relation(fields: [transaccionId], references: [id])
+
   @@unique([calificadorId, transaccionId])
   @@map("calificaciones")
 }
 
-// ================================
-// FUNCIONALIDADES ADICIONALES
-// ================================
-
 model FavoritoMoto {
   id        String   @id @default(cuid())
   usuarioId String
-  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   motoId    String
-  moto      Moto     @relation(fields: [motoId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  
+  moto      Moto     @relation(fields: [motoId], references: [id], onDelete: Cascade)
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
   @@unique([usuarioId, motoId])
   @@map("favoritos_moto")
 }
 
 model Reporte {
-  id          String      @id @default(cuid())
-  tipo        TipoReporte
-  motivo      String
-  descripcion String?
-  estado      EstadoReporte @default(PENDIENTE)
-  
-  // Reportante
+  id           String        @id @default(cuid())
+  tipo         TipoReporte
+  motivo       String
+  descripcion  String?
+  estado       EstadoReporte @default(PENDIENTE)
   reportanteId String
-  reportante   Usuario    @relation(fields: [reportanteId], references: [id])
-  
-  // Objeto reportado
-  motoId      String?
-  moto        Moto?      @relation(fields: [motoId], references: [id])
-  
-  // Metadata
-  createdAt   DateTime   @default(now())
-  resolvidoAt DateTime?
-  
+  motoId       String?
+  createdAt    DateTime      @default(now())
+  resolvidoAt  DateTime?
+  moto         Moto?         @relation(fields: [motoId], references: [id])
+  reportante   Usuario       @relation(fields: [reportanteId], references: [id])
+
   @@map("reportes")
 }
-
-// ================================
-// ENUMS
-// ================================
 
 enum TipoCombustible {
   GASOLINA
