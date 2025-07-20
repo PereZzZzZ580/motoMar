@@ -81,9 +81,9 @@ export default function MisMotosPage() {
       </div>
 
       {loading ? (
-        <p>Cargando tus motos...</p>
+        <p className="text-gray-700">Cargando tus motos...</p>
       ) : motosFiltradas.length === 0 ? (
-        <p>No tienes motos en este estado.</p>
+        <p className ="text-gray-700"> No tienes motos en este estado.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {motosFiltradas.map((moto) => (

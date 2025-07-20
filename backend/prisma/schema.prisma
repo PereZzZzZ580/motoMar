@@ -282,7 +282,7 @@ model Reporte {
 }
 
 enum TipoCombustible {
-  GASOLINA
+  Gasolina
   ELECTRICA
   HIBRIDA
 }

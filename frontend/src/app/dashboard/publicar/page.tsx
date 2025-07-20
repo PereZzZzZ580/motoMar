@@ -37,8 +37,8 @@ const marcasPopulares = [
 ];
 
 const tiposMotor = ['2 Tiempos', '4 Tiempos', 'Eléctrico'];
-const tiposTransmision = ['Manual', 'Automática', 'Semiautomática'];
-const tiposCombustible = ['Gasolina', 'Eléctrico', 'Híbrido'];
+const tiposTransmision = ['MANUAL', 'AUTOMATICA', 'SEMI_AUTOMATICA'];
+const tiposCombustible = ['GASOLINA', 'ELECTRICA', 'HIBRIDA'];
 
 export default function PublicarMotoPage() {
   const router = useRouter();
@@ -56,8 +56,8 @@ export default function PublicarMotoPage() {
     kilometraje: '',
     color: '',
     tipo_motor: '4 Tiempos',
-    transmision: 'Manual',
-    combustible: 'Gasolina',
+    transmision: 'MANUAL',
+    combustible: 'GASOLINA',
     placa_termina_en: '',
     soat_hasta: '',
     tecnomecanica_hasta: '',
@@ -118,47 +118,58 @@ export default function PublicarMotoPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (images.length === 0) {
-      toast.error('Debes subir al menos una imagen');
-      return;
+  e.preventDefault();
+
+  if (images.length === 0) {
+    toast.error('Debes subir al menos una imagen');
+    return;
+  }
+
+  setLoading(true);
+  toast.loading('Publicando moto...');
+
+  try {
+    // 1. Crear moto sin imágenes
+    const motoData = {
+      ...formData,
+      precio: parseFloat(formData.precio),
+      año: parseInt(formData.año),
+      cilindraje: parseInt(formData.cilindraje),
+      kilometraje: parseInt(formData.kilometraje),
+    };
+
+    const response = await api.post('/motos', motoData);
+    const motoId = response.data.moto.id;
+
+    // 2. Crear FormData con imágenes
+    const form = new FormData();
+    images.forEach((img) => form.append('imagenes', img));
+
+    // 3. Subir imágenes asociadas a la moto
+    await api.post(`/motos/${motoId}/imagenes`, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    toast.dismiss();
+    toast.success('¡Moto publicada con éxito!');
+    router.push(`/motos/${motoId}`);
+  } catch (error) {
+    toast.dismiss();
+    console.error('❌ Error publicando moto:', error);
+
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      toast.error(axiosError.response?.data?.error || 'Error al publicar la moto');
+    } else {
+      toast.error('Error al publicar la moto');
     }
+  } finally {
+    setLoading(false);
+  }
+};
 
-    setLoading(true);
-
-    try {
-      // Primero crear la moto
-      const motoData = {
-        ...formData,
-        precio: parseFloat(formData.precio),
-        año: parseInt(formData.año),
-        cilindraje: parseInt(formData.cilindraje),
-        kilometraje: parseInt(formData.kilometraje)
-      };
-
-      const response = await api.post('/motos', motoData);
-      const motoId = response.data.moto.id;
-
-      // Luego subir las imágenes (aquí simularemos, en producción usarías Cloudinary)
-      toast.success('¡Moto publicada exitosamente!');
-      
-      // Redirigir al detalle de la moto
-      router.push(`/motos/${motoId}`);
-    } catch (error) {
-        console.error('Error al publicar:', error);
-  
-     // Manejo del error con tipado correcto
-         if (error && typeof error === 'object' && 'response' in error) {
-         const axiosError = error as { response?: { data?: { error?: string } } };
-          toast.error(axiosError.response?.data?.error || 'Error al publicar la moto');
-     } else {
-    toast.error('Error al publicar la moto');
-     }
-    } finally {
-        setLoading(false);
-    }
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -390,7 +401,9 @@ export default function PublicarMotoPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 {tiposTransmision.map(tipo => (
-                  <option key={tipo} value={tipo}>{tipo}</option>
+                  <option key={tipo} value={tipo}>
+                  {tipo.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
+                  </option>
                 ))}
               </select>
             </div>
@@ -406,7 +419,9 @@ export default function PublicarMotoPage() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 {tiposCombustible.map(tipo => (
-                  <option key={tipo} value={tipo}>{tipo}</option>
+                  <option key={tipo} value={tipo}>
+                  {tipo.charAt(0) + tipo.slice(1).toLowerCase()}
+                  </option>
                 ))}
               </select>
             </div>
