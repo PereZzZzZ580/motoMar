@@ -242,4 +242,15 @@ export const auth = {
   },
 };
 
+// Función para obtener las motos del usuario
+export const getMisMotos = async () => {
+  const res = await fetch('/api/motos/me/all', {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('No se pudo cargar mis motos');
+  return res.json();
+};
+
+
 export default api;

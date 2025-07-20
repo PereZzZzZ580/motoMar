@@ -10,8 +10,12 @@ import {
 } from '../controllers/motos';
 import { authenticateToken, optionalAuth } from '../middleware/auth';
 import { prisma } from '../config/database';
+import express from 'express';
+import {getMisMotos} from '../controllers/motos';
 
 const router = Router();
+
+
 
 // =================================
 // RUTAS PÚBLICAS (SIN AUTENTICACIÓN)

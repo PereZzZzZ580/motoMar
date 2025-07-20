@@ -724,11 +724,42 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+// =================================
+// OBTENER MIS MOTOS (SOLO VENDEDOR) 
+// =================================
+// esta funcion es para obtener las motos del usuario autenticado
+// se usa en el dashboard del usuario
+  export const getMisMotos = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    const motos = await prisma.moto.findMany({
+      where: { vendedorId: userId },
+      include: {
+        imagenes: true,
+        _count: {
+          select: { favoritos: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(motos);
+  } catch (error) {
+    console.error('❌ Error obteniendo mis motos:', error);
+    res.status(500).json({
+      error: 'Error obteniendo tus motos'
+    });
+  }
+};
+
+
 export default {
   createMoto,
   getMotos,
   getMotoById,
   getMyMotos,
+  getMisMotos,
   updateMoto,
   deleteMoto
 };
