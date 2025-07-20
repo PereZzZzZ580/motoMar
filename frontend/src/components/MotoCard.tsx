@@ -1,9 +1,7 @@
- // src/components/MotoCard.tsx
+// src/components/MotoCard.tsx
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import api from '@/lib/api';
 
 interface Moto {
   id: string;
@@ -32,21 +30,15 @@ interface Moto {
 
 interface MotoCardProps {
   moto: Moto;
-  onFavoriteToggle?: () => void;
+  onFavoriteToggle?: (motoId: string) => void;
 }
 
 export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
-  const [isFavorite, setIsFavorite] = useState(moto.es_favorito || false);
-  const [favoriteCount, setFavoriteCount] = useState(moto._count?.favoritos || 0);
-
-  const handleFavoriteToggle = async () => {
-    try {
-      const response = await api.post(`/motos/${moto.id}/favorito`);
-      setIsFavorite(response.data.es_favorito);
-      setFavoriteCount(response.data.total_favoritos);
-      if (onFavoriteToggle) onFavoriteToggle();
-    } catch (error) {
-      console.error('Error al cambiar favorito:', error);
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evitar navegación
+    e.stopPropagation();
+    if (onFavoriteToggle) {
+      onFavoriteToggle(moto.id);
     }
   };
 
@@ -79,13 +71,18 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
           />
         </Link>
         
+        {/* Botón de favorito - SOLO VISUAL, manejado por Dashboard */}
         <button
-          onClick={handleFavoriteToggle}
+          onClick={handleFavoriteClick}
           className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
         >
           <svg
-            className={`w-5 h-5 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-400'}`}
-            fill={isFavorite ? 'currentColor' : 'none'}
+            className={`w-5 h-5 transition-colors ${
+              moto.es_favorito 
+                ? 'text-red-500 fill-current' 
+                : 'text-gray-400 hover:text-red-400'
+            }`}
+            fill={moto.es_favorito ? 'currentColor' : 'none'}
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
@@ -145,10 +142,15 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
           </div>
           
           <div className="flex items-center text-sm text-gray-500">
-            <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg 
+              className={`w-4 h-4 mr-1 ${moto.es_favorito ? 'text-red-500 fill-current' : ''}`}
+              fill={moto.es_favorito ? 'currentColor' : 'none'} 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            {favoriteCount}
+            {moto._count?.favoritos || 0}
           </div>
         </div>
       </div>

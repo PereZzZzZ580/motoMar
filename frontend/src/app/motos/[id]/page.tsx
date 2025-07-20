@@ -159,31 +159,31 @@ export default function MotoDetallePage() {
             </div>
 
             {/* Detalles técnicos */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white text-gray-500 p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold mb-4">Detalles Técnicos</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-500">Marca:</span>
+                  <span className="text-gray-900">Marca:</span>
                   <span className="ml-2 font-medium">{moto.marca}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Modelo:</span>
+                  <span className="text-gray-900">Modelo:</span>
                   <span className="ml-2 font-medium">{moto.modelo}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Año:</span>
+                  <span className="text-gray-900">Año:</span>
                   <span className="ml-2 font-medium">{moto.año}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Cilindraje:</span>
+                  <span className="text-gray-900">Cilindraje:</span>
                   <span className="ml-2 font-medium">{moto.cilindraje} cc</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Kilometraje:</span>
+                  <span className="text-gray-900">Kilometraje:</span>
                   <span className="ml-2 font-medium">{moto.kilometraje.toLocaleString()} km</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Color:</span>
+                  <span className="text-gray-900">Color:</span>
                   <span className="ml-2 font-medium">{moto.color}</span>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function MotoDetallePage() {
 
             {/* Vendedor */}
             {moto.vendedor && (
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white p-6  text-gray-500 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-4">Vendedor</h3>
                 <div className="flex items-center mb-2">
                   <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold">
@@ -222,7 +222,7 @@ export default function MotoDetallePage() {
         </div>
 
         {/* Descripción */}
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+        <div className="mt-8 bg-white  text-gray-500 p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4">Descripción</h3>
           <p className="text-gray-700 leading-relaxed">{moto.descripcion}</p>
         </div>

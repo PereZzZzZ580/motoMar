@@ -358,13 +358,35 @@ export const getMotos = async (req: Request, res: Response): Promise<void> => {
       prisma.moto.count({ where })
     ]);
 
+    const motosConFavoritos = await Promise.all(
+       motos.map(async (moto) => {
+        if (req.userId) {
+          const esFavorito = await prisma.favoritoMoto.findFirst({
+        where: {
+          usuarioId: req.userId,
+          motoId: moto.id
+        }
+        });
+        return { 
+            ...moto, 
+            es_favorito: !!esFavorito // Convertir a boolean
+          };
+        }
+        return { 
+          ...moto, 
+          es_favorito: false 
+        };
+      })
+    );
+
+
     // Calcular metadata de paginación
     const totalPages = Math.ceil(total / limitNum);
     const hasNextPage = pageNum < totalPages;
     const hasPreviousPage = pageNum > 1;
 
     res.json({
-      motos,
+      motos: motosConFavoritos,
       pagination: {
         page: pageNum,
         limit: limitNum,

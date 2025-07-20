@@ -4,6 +4,8 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import MotoCard from '@/components/MotoCard';
+import toast from 'react-hot-toast';
+import { Response } from 'express';
 
 interface Moto {
   id: string;
@@ -89,10 +91,15 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchMotos();
-  };
+  // se elimino la funcion handlesearch y se reemplazo por un useEffect que se ejecuta automáticamente
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchMotos();
+    }, 500); // Búsqueda automática después de 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, filters]); // Se ejecuta cuando cambia searchTerm o filters
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters({ ...filters, ...newFilters });
@@ -102,6 +109,35 @@ export default function DashboardPage() {
     setFilters({});
     setSearchTerm('');
   };
+
+  const toggleFavorito = async (motoId: string) => {
+  try {
+    const Response = await api.post(`/motos/${motoId}/favorito`);
+    
+    // Actualizar el estado local inmediatamente
+    setMotos(prev => prev.map(moto => 
+      moto.id === motoId 
+        ? { 
+            ...moto, 
+            es_favorito: !moto.es_favorito,
+            _count: {
+              ...moto._count,
+              favoritos: !moto.es_favorito 
+                ? (moto._count?.favoritos || 0) + 1 
+                : (moto._count?.favoritos || 0) - 1
+            }
+          }
+        : moto
+    ));
+
+    const motoActual = motos.find(m => m.id === motoId);
+    toast.success(!motoActual?.es_favorito ? '¡Agregado a favoritos!' : 'eliminado de favoritos');
+  } catch (error) {
+    console.error('Error al actualizar favorito:', error);
+    toast.error('Error al actualizar favoritos');
+  }
+};
+
 
   return (
     <div className="px-4 py-6 sm:px-0">
@@ -172,7 +208,7 @@ export default function DashboardPage() {
 
       {/* Barra de búsqueda y filtros */}
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <form onSubmit={handleSearch} className="flex gap-4 mb-4">
+        <form className="flex gap-4 mb-4">
           <input
             type="text"
             value={searchTerm}
@@ -198,7 +234,7 @@ export default function DashboardPage() {
         {/* Filtros expandibles */}
         {showFilters && (
           <div className="border-t pt-4 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Marca
@@ -260,6 +296,26 @@ export default function DashboardPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Departamento
+                </label>
+                <select
+                  value={filters.departamento || ''}
+                  onChange={(e) => handleFilterChange({ departamento: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                >
+                  <option value="">Todos los departamentos</option>
+                  <option value="Antioquia">Antioquia</option>
+                  <option value="Bogotá D.C.">Bogotá D.C.</option>
+                  <option value="Valle del Cauca">Valle del Cauca</option>
+                  <option value="Quindío">Quindío</option>
+                  <option value="Cundinamarca">Cundinamarca</option>
+                  <option value="Atlántico">Atlántico</option>
+                  <option value="Santander">Santander</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Ordenar por
                 </label>
                 <select
@@ -285,6 +341,9 @@ export default function DashboardPage() {
                 </button>
               </div>
             </div>
+            <div className="mt-4 text-sm text-gray-500 text-center">
+              {motos.length} motos encontradas
+            </div>
           </div>
         )}
       </div>
@@ -301,7 +360,7 @@ export default function DashboardPage() {
             <MotoCard
               key={moto.id}
               moto={moto}
-              onFavoriteToggle={() => fetchMotos()}
+              onFavoriteToggle={() => toggleFavorito(moto.id)}
             />
           ))}
         </div>
