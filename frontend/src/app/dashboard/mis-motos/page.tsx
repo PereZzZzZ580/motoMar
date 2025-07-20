@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import MotoCard from '@/components/MotoCard';
@@ -34,10 +34,18 @@ export default function MisMotosPage() {
   useEffect(() => {
     const fetchMotos = async () => {
       try {
-        const data = await getMisMotos(); // 🔗 conecta con lib/api.ts
-        setMotos(data);
+        const data = await getMisMotos();
+
+        // ✅ Asegura que lo que llegue sea un array antes de asignar
+        if (Array.isArray(data)) {
+          setMotos(data);
+        } else {
+          console.warn('⚠️ getMisMotos no retornó un array:', data);
+          setMotos([]);
+        }
       } catch (error) {
-        console.error('Error cargando mis motos', error);
+        console.error('❌ Error cargando mis motos:', error);
+        setMotos([]);
       } finally {
         setLoading(false);
       }
@@ -46,9 +54,12 @@ export default function MisMotosPage() {
     fetchMotos();
   }, []);
 
-  const motosFiltradas = filtro === 'TODAS'
-    ? motos
-    : motos.filter((m) => m.estado === filtro);
+  // ✅ Siempre aseguramos que motosFiltradas sea un array
+  const motosFiltradas = Array.isArray(motos)
+    ? filtro === 'TODAS'
+      ? motos
+      : motos.filter((m) => m.estado === filtro)
+    : [];
 
   return (
     <div className="p-6">
@@ -83,4 +94,3 @@ export default function MisMotosPage() {
     </div>
   );
 }
-

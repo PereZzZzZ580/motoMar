@@ -244,13 +244,23 @@ export const auth = {
 
 // Función para obtener las motos del usuario
 export const getMisMotos = async () => {
-  const res = await fetch('/api/motos/me/all', {
-    method: 'GET',
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('No se pudo cargar mis motos');
-  return res.json();
+  const response = await api.get('/motos/me/all');
+
+  // Si devuelve { motos: [...] }, retornamos el array
+  if (Array.isArray(response.data.motos)) {
+    return response.data.motos;
+  }
+
+  // Si ya es array directamente
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+
+  // En cualquier otro caso, retornamos []
+  console.warn('⚠️ Backend devolvió formato inesperado:', response.data);
+  return [];
 };
+
 
 
 export default api;
