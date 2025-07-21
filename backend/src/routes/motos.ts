@@ -12,6 +12,7 @@ import { authenticateToken, optionalAuth } from '../middleware/auth';
 import { prisma } from '../config/database';
 import express from 'express';
 import {getMisMotos} from '../controllers/motos';
+import { upload } from '../middleware/upload';
 
 const router = Router();
 
@@ -60,6 +61,57 @@ router.put('/:id', authenticateToken, updateMoto);
  * Eliminar (desactivar) una moto
  */
 router.delete('/:id', authenticateToken, deleteMoto);
+
+// ===============================================
+// RUTA PROTEGIDA: Subir imágenes para una moto
+// ===============================================
+
+/**
+ * POST /api/motos/:id/imagenes
+ * Subir hasta 5 imágenes para una moto existente
+ */
+router.post(
+  '/:id/imagenes',
+  authenticateToken, // ✅ Asegura que el usuario esté autenticado
+  upload.array('imagenes', 5), // ✅ Multer para manejar hasta 5 archivos
+  async (req, res) => {
+    try {
+      const motoId = req.params.id;
+      const files = req.files as Express.Multer.File[];
+
+      // ✅ Verificar que la moto existe
+      const moto = await prisma.moto.findUnique({
+        where: { id: motoId }
+      });
+
+      if (!moto) {
+        return res.status(404).json({
+          error: 'Moto no encontrada'
+        });
+      }
+
+      // ✅ Crear registros de imágenes en la base de datos
+      const imagenes = await prisma.imagenMoto.createMany({
+        data: files.map((file) => ({
+          url: `/uploads/${file.filename}`,
+          motoId,
+        })),
+      });
+
+      res.json({
+        message: '🖼️ Imágenes subidas correctamente',
+        imagenes
+      });
+
+    } catch (error) {
+      console.error('❌ Error al subir imágenes:', error);
+      res.status(500).json({
+        error: 'Error interno al subir imágenes'
+      });
+    }
+  }
+);
+
 
 // =================================
 // RUTAS DE FAVORITOS

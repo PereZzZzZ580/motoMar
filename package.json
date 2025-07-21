@@ -10,10 +10,19 @@
     "dev:backend": "cd backend && npm run dev",
     "build": "cd frontend && npm run build && cd ../backend && npm run build"
   },
-  "keywords": ["motocicletas", "marketplace", "colombia", "nextjs", "nodejs"],
+  "keywords": [
+    "motocicletas",
+    "marketplace",
+    "colombia",
+    "nextjs",
+    "nodejs"
+  ],
   "author": "Tu Nombre",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.0"
+  },
+  "dependencies": {
+    "multer": "^2.0.2"
   }
 }
