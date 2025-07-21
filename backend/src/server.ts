@@ -82,6 +82,10 @@ app.use('/api/motos', motosRoutes);
 // app.use('/api/chat', chatRoutes);
 // app.use('/api/transactions', transactionRoutes);
 
+// app.use('/api/users', (req, res) => {
+import path from 'path';
+app.use('/uploads', express.static(path.join(__dirname,'..', 'uploads')));
+
 // =================================
 // MANEJO DE ERRORES
 // =================================

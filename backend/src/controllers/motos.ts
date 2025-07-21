@@ -729,14 +729,20 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
 // =================================
 // esta funcion es para obtener las motos del usuario autenticado
 // se usa en el dashboard del usuario
-  export const getMisMotos = async (req: Request, res: Response) => {
+// =================================
+// OBTENER MIS MOTOS (DASHBOARD USUARIO)
+// =================================
+export const getMisMotos = async (req: Request, res: Response) => {
   try {
     const userId = req.userId!;
 
     const motos = await prisma.moto.findMany({
       where: { vendedorId: userId },
       include: {
-        imagenes: true,
+        imagenes: {
+          orderBy: { orden: 'asc' }, // Mostrar siempre imagen principal primero
+          take: 1
+        },
         _count: {
           select: { favoritos: true }
         }

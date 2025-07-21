@@ -48,7 +48,7 @@ router.post('/', authenticateToken, createMoto);
  * GET /api/motos/me/all
  * Obtener todas las motas del usuario actual
  */
-router.get('/me/all', authenticateToken, getMyMotos);
+router.get('/me/all', authenticateToken, getMisMotos);
 
 /**
  * PUT /api/motos/:id

@@ -81,6 +81,7 @@ export interface Moto {
   imagenPrincipal?: string;
   views: number;
   createdAt: string;
+  imagenes?: { url: string; alt? : string }[];
   vendedor: {
     nombre: string;
     apellido: string;
@@ -182,7 +183,7 @@ export const motosAPI = {
   // Obtener mis motos
   getMyMotos: async () => {
     const response = await api.get('/motos/me/all');
-    return response.data;
+    return response.data;  
   },
 
   // Obtener favoritos

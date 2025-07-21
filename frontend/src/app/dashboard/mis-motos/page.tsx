@@ -61,6 +61,27 @@ export default function MisMotosPage() {
       : motos.filter((m) => m.estado === filtro)
     : [];
 
+  // Manejo de eliminación de moto para evitar errores de referencia
+  const handleDelete = async (id: string) => {
+
+      if (confirm('¿Estás seguro de que deseas eliminar esta moto?')) {
+        try {
+          await fetch(`http://localhost:3001/api/motos/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          // Filtramos la moto eliminada del estado local
+          setMotos(prev => prev.filter((moto) => moto.id !== id));
+        } catch (err) {
+          console.error('❌ Error al eliminar la moto:', err);
+          alert('Ocurrió un error al intentar eliminar la moto.');
+        }
+      }
+    };
+
+
   return (
     <div className="p-6">
       <h1 className="text-3xl text-gray-400 font-bold mb-4">Mis Motos</h1>
@@ -87,7 +108,15 @@ export default function MisMotosPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {motosFiltradas.map((moto) => (
-            <MotoCard key={moto.id} moto={moto} />
+            <div key={moto.id} className = "relative group">
+              <MotoCard moto={moto} />
+              <button
+                onClick={() => handleDelete(moto.id)}
+                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  Eliminar
+                </button>
+              </div>
           ))}
         </div>
       )}
