@@ -28,6 +28,61 @@ const router = Router();
  */
 router.get('/', optionalAuth, getMotos);
 
+/* ---------- PROTEGIDAS ---------- */
+/*  👇  ***IMPORTANTE***  estas rutas van antes de "/:id" , para evitar errores con img */
+
+/**
+ * GET /api/motos/me/all
+ * Obtener todas las motas del usuario actual
+ */
+router.get('/me/all', authenticateToken, getMisMotos);
+
+/**
+ * GET /api/motos/me/favoritos
+ * Obtener motos favoritas del usuario
+ */
+
+router.get('/me/favoritos', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.userId!;
+
+    const favoritos = await prisma.favoritoMoto.findMany({
+      where: { usuarioId: userId },
+      include: {
+        moto: {
+          include: {
+            imagenes: {
+              take: 1,
+              orderBy: { orden: 'asc' }
+            },
+            vendedor: {
+              select: {
+                nombre: true,
+                apellido: true,
+                calificacion: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json({
+      favoritos: favoritos.map(f => f.moto),
+      total: favoritos.length
+    });
+
+  } catch (error) {
+    console.error('❌ Error obteniendo favoritos:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor'
+    });
+  }
+});
+
+
+
 /**
  * GET /api/motos/:id
  * Obtener una moto específica por ID
@@ -44,11 +99,6 @@ router.get('/:id', optionalAuth, getMotoById);
  */
 router.post('/', authenticateToken, createMoto);
 
-/**
- * GET /api/motos/me/all
- * Obtener todas las motas del usuario actual
- */
-router.get('/me/all', authenticateToken, getMisMotos);
 
 /**
  * PUT /api/motos/:id
@@ -186,48 +236,6 @@ router.post('/:id/favorito', authenticateToken, async (req, res) => {
   }
 });
 
-/**
- * GET /api/motos/me/favoritos
- * Obtener motos favoritas del usuario
- */
-router.get('/me/favoritos', authenticateToken, async (req, res) => {
-  try {
-    const userId = req.userId!;
-
-    const favoritos = await prisma.favoritoMoto.findMany({
-      where: { usuarioId: userId },
-      include: {
-        moto: {
-          include: {
-            imagenes: {
-              take: 1,
-              orderBy: { orden: 'asc' }
-            },
-            vendedor: {
-              select: {
-                nombre: true,
-                apellido: true,
-                calificacion: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-
-    res.json({
-      favoritos: favoritos.map(f => f.moto),
-      total: favoritos.length
-    });
-
-  } catch (error) {
-    console.error('❌ Error obteniendo favoritos:', error);
-    res.status(500).json({
-      error: 'Error interno del servidor'
-    });
-  }
-});
 
 // =================================
 // RUTAS DE BÚSQUEDA AVANZADA

@@ -61,16 +61,19 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
       <div className="relative">
         <Link href={`/motos/${moto.id}`}>
           <img
-            src={moto.imagenes[0]?.url || 'https://via.placeholder.com/400x300?text=Sin+Imagen'}
+            src={
+              moto.imagenes[0]?.url               // array incluido
+              || moto.imagenPrincipal             // fallback guardado en DB
+              || '/no-image.png'                  // placeholder local
+            }
             alt={moto.titulo}
-            className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+            className="w-full h-48 object-cover hover:scale-105 duration-300"
           />
-        </Link>
-        
+        </Link>  
         {/* Botón de favorito - SOLO VISUAL, manejado por Dashboard */}
         <button
           onClick={handleFavoriteClick}
