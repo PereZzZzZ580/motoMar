@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import api from '@/lib/api';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Moto {
@@ -49,7 +49,9 @@ export default function MotoDetallePage() {
   const router = useRouter();
   const [moto, setMoto] = useState<Moto | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
   const motoId = params.id as string;
 
@@ -113,6 +115,11 @@ export default function MotoDetallePage() {
     );
   }
 
+  const imgs = moto.imagenes || [];
+  const total = imgs.length;
+  const placeholder = 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop';
+
+
   // Renderizado principal
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,16 +139,31 @@ export default function MotoDetallePage() {
         {/* Grid principal */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Imagen */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="relative bg-white rounded-lg shadow-md overflow-hidden">
             <img
-              src={
-                moto.imagenes && moto.imagenes.length > 0
-                  ? moto.imagenes[0].url
-                  : 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop'
+              src={ total
+                ? `${API}${imgs[currentIdx].url}`
+                : placeholder
               }
-              alt={moto.titulo}
+              alt={`${moto.titulo} imagen ${currentIdx + 1}`}
               className="w-full h-96 object-cover"
             />
+            {total > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentIdx((currentIdx - 1 + total) % total)}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white p-2 rounded-full"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => setCurrentIdx((currentIdx + 1) % total)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white p-2 rounded-full"
+                >
+                  ›
+                </button>
+              </>
+            )}
           </div>
 
           {/* Información */}

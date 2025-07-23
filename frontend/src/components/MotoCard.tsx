@@ -60,6 +60,8 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
     return colors[estado] || 'bg-gray-100 text-gray-800';
   };
 
+  const API = process.env.NEXT_PUBLIC_API_URL;
+
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
       <div className="relative">
@@ -67,11 +69,11 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
           <img
             src={
               moto.imagenes[0]?.url               // array incluido
-              || moto.imagenPrincipal             // fallback guardado en DB
-              || '/no-image.png'                  // placeholder local
+              ? `${API}/uploads/${moto.imagenes[0].url}` // URL de la imagen
+              : '/no-image.png'                  // placeholder local
             }
             alt={moto.titulo}
-            className="w-full h-48 object-cover hover:scale-105 duration-300"
+            className="w-full h-60 object-cover hover:scale-105 duration-300"
           />
         </Link>  
         {/* Botón de favorito - SOLO VISUAL, manejado por Dashboard */}
