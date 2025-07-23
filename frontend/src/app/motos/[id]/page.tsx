@@ -50,7 +50,8 @@ export default function MotoDetallePage() {
   const [moto, setMoto] = useState<Moto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const API = process.env.NEXT_PUBLIC_API_URL;
+  const placeholder = 'https://images.unsplash.com/photo-…'; // Ruta al placeholder de imagen
   const motoId = params.id as string;
 
   useEffect(() => {
@@ -136,8 +137,8 @@ export default function MotoDetallePage() {
             <img
               src={
                 moto.imagenes && moto.imagenes.length > 0
-                  ? moto.imagenes[0].url
-                  : 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop'
+                  ? `${API}${moto.imagenes[0].url}`
+                  : placeholder
               }
               alt={moto.titulo}
               className="w-full h-96 object-cover"

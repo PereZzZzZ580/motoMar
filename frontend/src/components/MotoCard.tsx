@@ -60,15 +60,18 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
     return colors[estado] || 'bg-gray-100 text-gray-800';
   };
 
+  const API = process.env.NEXT_PUBLIC_API_URL;
+  const thumbnail = moto.imagenes[0]
+    ? `${API}${moto.imagenes[0].url}`
+    : '/no-image.png'; // Placeholder local
+
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
       <div className="relative">
         <Link href={`/motos/${moto.id}`}>
           <img
             src={
-              moto.imagenes[0]?.url               // array incluido
-              || moto.imagenPrincipal             // fallback guardado en DB
-              || '/no-image.png'                  // placeholder local
+              thumbnail               // array incluido              
             }
             alt={moto.titulo}
             className="w-full h-48 object-cover hover:scale-105 duration-300"
