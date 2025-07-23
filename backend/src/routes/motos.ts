@@ -147,17 +147,33 @@ router.post(
       }
 
       // ✅ Crear registros de imágenes en la base de datos
-      const imagenes = await prisma.imagenMoto.createMany({
-        data: files.map((file) => ({
-          motoId,
-          url : file.filename, // Guardar solo el nombre del archivo
-          orden: 0 // Orden por defecto, se puede actualizar después
-        })),
-      });
+      // === Después ===
+// Crear cada imagen individualmente para capturar el índice y el registro resultante
+const imagenesCreadas = await Promise.all(
+  files.map((file, index) =>
+    prisma.imagenMoto.create({
+      data: {
+        motoId,
+        url: file.filename,
+        alt: `Imagen ${index + 1} de la moto ${motoId}`,
+        orden: index,
+      }
+    })
+  )
+);
 
+// imagenPrincipal, asignar la primera subida
+    if (!moto.imagenPrincipal && imagenesCreadas.length > 0) {
+      await prisma.moto.update({
+        where: { id: motoId },
+        data: { imagenPrincipal: imagenesCreadas[0].url },
+      });
+    }
+
+    
       res.json({
         message: '🖼️ Imágenes subidas correctamente',
-        imagenes
+        imagenes : imagenesCreadas
       });
 
     } catch (error) {
