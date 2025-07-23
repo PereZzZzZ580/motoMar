@@ -61,6 +61,8 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   };
 
   const API = process.env.NEXT_PUBLIC_API_URL;
+
+  const API = process.env.NEXT_PUBLIC_API_URL;
   const thumbnail = moto.imagenes[0]
     ? `${API}${moto.imagenes[0].url}`
     : '/no-image.png'; // Placeholder local
@@ -71,10 +73,12 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
         <Link href={`/motos/${moto.id}`}>
           <img
             src={
-              thumbnail               // array incluido              
+              moto.imagenes[0]?.url               // array incluido
+              || moto.imagenPrincipal             // fallback guardado en DB
+              || '/no-image.png'                  // placeholder local
             }
             alt={moto.titulo}
-            className="w-full h-48 object-cover hover:scale-105 duration-300"
+            className="w-full h-60 object-cover hover:scale-105 duration-300"
           />
         </Link>  
         {/* Botón de favorito - SOLO VISUAL, manejado por Dashboard */}

@@ -68,7 +68,7 @@ model Moto {
   negociable      Boolean         @default(true)
   marca           String
   modelo          String
-  año             Int
+  año            Int
   cilindraje      Int
   kilometraje     Int
   color           String

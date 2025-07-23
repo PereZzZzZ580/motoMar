@@ -1,10 +1,10 @@
- import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import multer from 'multer';
+import path from 'path';
 
 // Crea la carpeta si no existe
-const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+const uploadDir = path.join(__dirname, '..','..', 'uploads');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),

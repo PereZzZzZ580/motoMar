@@ -1,9 +1,9 @@
  // src/app/dashboard/publicar/page.tsx
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface FormData {
@@ -125,6 +125,9 @@ export default function PublicarMotoPage() {
     return;
   }
 
+  const form = new FormData();
+  images.forEach((img) => form.append('imagenes', img));
+
   setLoading(true);
   toast.loading('Publicando moto...');
 
@@ -146,11 +149,7 @@ export default function PublicarMotoPage() {
     images.forEach((img) => form.append('imagenes', img));
 
     // 3. Subir imágenes asociadas a la moto
-    await api.post(`/motos/${motoId}/imagenes`, form, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    await api.post(`/motos/${motoId}/imagenes`, form);
 
     toast.dismiss();
     toast.success('¡Moto publicada con éxito!');

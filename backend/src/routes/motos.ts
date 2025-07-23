@@ -1,17 +1,15 @@
 // src/routes/motos.ts
 import { Router } from 'express';
-import { 
-  createMoto, 
-  getMotos, 
-  getMotoById, 
-  getMyMotos, 
-  updateMoto, 
-  deleteMoto 
+import { prisma } from '../config/database';
+import {
+  createMoto,
+  deleteMoto,
+  getMisMotos,
+  getMotoById,
+  getMotos,
+  updateMoto
 } from '../controllers/motos';
 import { authenticateToken, optionalAuth } from '../middleware/auth';
-import { prisma } from '../config/database';
-import express from 'express';
-import {getMisMotos} from '../controllers/motos';
 import { upload } from '../middleware/upload';
 
 const router = Router();
@@ -129,6 +127,14 @@ router.post(
       const motoId = req.params.id;
       const files = req.files as Express.Multer.File[];
 
+      // ✅ Verificar que se recibieron archivos
+      if (!files || files.length === 0) {
+      console.error('No se recibieron archivos en req.files:', req.files);
+      return res.status(400).json({ error: 'No se subieron imágenes' });
+    }
+
+
+      
       // ✅ Verificar que la moto existe
       const moto = await prisma.moto.findUnique({
         where: { id: motoId }
@@ -143,8 +149,9 @@ router.post(
       // ✅ Crear registros de imágenes en la base de datos
       const imagenes = await prisma.imagenMoto.createMany({
         data: files.map((file) => ({
-          url: `/uploads/${file.filename}`,
           motoId,
+          url : file.filename, // Guardar solo el nombre del archivo
+          orden: 0 // Orden por defecto, se puede actualizar después
         })),
       });
 

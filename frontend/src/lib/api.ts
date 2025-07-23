@@ -7,9 +7,10 @@ const API_BASE_URL = 'http://localhost:3001/api';
 // Crear instancia de axios
 export const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // inhabilitado temporalmente el header de Content-Type
+  //headers: {
+  //  'Content-Type': 'application/json',
+  //},
 });
 
 // Interceptor para agregar token automáticamente
