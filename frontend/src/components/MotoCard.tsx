@@ -2,6 +2,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import React from 'react';
 
 interface Moto {
   id: string;
@@ -17,6 +19,7 @@ interface Moto {
   departamento: string;
   estado: string;
   imagenes: { url: string }[];
+  imagenPrincipal?: string | null;
   vendedor?: {
     nombre: string;
     apellido: string;
@@ -64,23 +67,22 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
   const API = process.env.NEXT_PUBLIC_API_URL;
   const thumbnail = moto.imagenes[0]
-    ? `${API}${moto.imagenes[0].url}`
+    ? `${API}/uploads/${moto.imagenes[0].url}`
+    : moto.imagenPrincipal
+      ? `${API}/uploads/${moto.imagenPrincipal}`
     : '/no-image.png'; // Placeholder local
+
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
       <div className="relative">
         <Link href={`/motos/${moto.id}`}>
-          <img
-            src={
-              moto.imagenes[0]?.url
-              ? `${API}/uploads/${moto.imagenes[0].url}`
-              : moto.imagenPrincipal
-                ? `${API}/uploads/${moto.imagenPrincipal}` 
-                 : '/no-image.png'            // array incluido
-
-            }
+          <Image
+            src={thumbnail}
             alt={moto.titulo}
+            width={400}
+            height={300}
+            priority
             className="w-full h-60 object-cover hover:scale-105 duration-300"
           />
         </Link>  

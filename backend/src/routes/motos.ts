@@ -11,6 +11,7 @@ import {
 } from '../controllers/motos';
 import { authenticateToken, optionalAuth } from '../middleware/auth';
 import { upload } from '../middleware/upload';
+import path from 'path';
 
 const router = Router();
 

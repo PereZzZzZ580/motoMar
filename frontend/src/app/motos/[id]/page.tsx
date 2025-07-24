@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
+import React from 'react';
+
 
 interface Moto {
   id: string;
@@ -51,7 +54,7 @@ export default function MotoDetallePage() {
   const [loading, setLoading] = useState(true);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const API = process.env.NEXT_PUBLIC_API_URL;
+  const API = process.env.NEXT_PUBLIC_API_URL || '';
   const placeholder = 'https://images.unsplash.com/photo-…'; // Ruta al placeholder de imagen
   const motoId = params.id as string;
 
@@ -117,6 +120,7 @@ export default function MotoDetallePage() {
 
   const imgs = moto.imagenes || [];
   const total = imgs.length;
+  const currentImage = imgs[currentIdx] ?? null;
   
 
 
@@ -139,15 +143,17 @@ export default function MotoDetallePage() {
         {/* Grid principal */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Imagen */}
-          <div className="relative bg-white rounded-lg shadow-md overflow-hidden">
-            <img
+          <div className="relative w-full h-96 bg-white rounded-lg shadow-md overflow-hidden">
+            <Image
               src={
-                moto.imagenes && moto.imagenes.length > 0
-                  ? `${API}${moto.imagenes[0].url}`
+                currentImage?.url
+                  ? `${API}/uploads/${currentImage.url}`
                   : placeholder
               }
               alt={`${moto.titulo} imagen ${currentIdx + 1}`}
-              className="w-full h-96 object-cover"
+              fill       //cubre todo el contenedor
+              style ={{ objectFit: 'cover' }}   // Mantiene la proporción de la imagen
+              priority
             />
             {total > 1 && (
               <>
