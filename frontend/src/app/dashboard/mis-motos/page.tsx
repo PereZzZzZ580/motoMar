@@ -3,13 +3,11 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import api, { getMisMotos } from '@/lib/api';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import api from '@/lib/api';
-import MotoCard from '@/components/MotoCard';
 
 interface Moto {
   id: string;
@@ -17,81 +15,94 @@ interface Moto {
   precio: number;
   estado: 'ACTIVA' | 'VENDIDA' | 'PAUSADA';
   imagenPrincipal?: string | null;
-  _count?: { favoritos: number };
 }
 
-type Filtro = 'TODAS' | 'ACTIVA' | 'VENDIDA' | 'PAUSADA';
-const estados: Filtro[] = ['TODAS', 'ACTIVA', 'VENDIDA', 'PAUSADA'];
-
+type Filtro = 'TODAS' | Moto['estado'];
+const ESTADOS: Filtro[] = ['TODAS', 'ACTIVA', 'VENDIDA', 'PAUSADA'];
 
 export default function MisMotosPage() {
   const [motos, setMotos] = useState<Moto[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>('TODAS');
-  const router = useRouter();
+
   const API = process.env.NEXT_PUBLIC_API_URL || '';
 
-  // 1) Fetch de mis motos
+  // ─── 1) Traer SOLO con getMisMotos(), sin llamadas extra que fallen ─────────
+  const fetchMotos = async () => {
+    try {
+      const data = await getMisMotos();  // ← aquí obtienes [{…}, …] o []
+      setMotos(data);
+    } catch (err) {
+      console.error('❌ Error cargando tus motos:', err);
+      toast.error('No se pudieron cargar tus motos');
+      setMotos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ─── 2) Al montar, cargar la lista real del backend ──────────────────────────
   useEffect(() => {
-    api
-      .get<{ motos: Moto[] }>('/motos/mis-motos')
-      .then(res => setMotos(res.data.motos))
-      .catch(err => {
-        console.error(err);
-        toast.error('Error cargando tus motos');
-      })
-      .finally(() => setLoading(false));
+    fetchMotos();
   }, []);
 
-  // 2) Filtrado en cliente
-  const motosFiltradas = filtro === 'TODAS'
-    ? motos
-    : motos.filter(m => m.estado === filtro);
+  // ─── 3) Filtrado en cliente ─────────────────────────────────────────────────
+  const safeMotos = Array.isArray(motos) ? motos : [];
+  const motosFiltradas = useMemo(
+    () =>
+      filtro === 'TODAS'
+        ? safeMotos
+        : safeMotos.filter((m) => m.estado === filtro),
+    [safeMotos, filtro]
+  );
 
-  // 3) Eliminación quirúrgica + refresh
+  // Eliminación optimizada: borra en el backend y luego actualizas el estado
   const handleDelete = async (id: string) => {
     if (!confirm('¿Seguro que deseas eliminar esta moto?')) return;
     try {
+      // 1) Petición al backend (asegúrate que la ruta existe y devuelve 200)
       await api.delete(`/motos/${id}`);
       toast.success('Moto eliminada');
-      // Opción A: quitarla del estado local
-      setMotos(prev => prev.filter(m => m.id !== id));
-      // Opción B: forzar revalidación completa
-      router.refresh();
+
+      // 2) Actualizas el estado local (sin volver a fetch)
+      setMotos((prev) => prev.filter((m) => m.id !== id));
+
     } catch (err) {
-      console.error(err);
+      console.error('❌ Error al eliminar la moto:', err);
       toast.error('No se pudo eliminar la moto');
     }
   };
 
+  // ─── 5) Render ──────────────────────────────────────────────────────────────
   if (loading) {
-    return <p className="p-6">Cargando tus motos…</p>;
+    return <p className="p-6 text-center">Cargando tus motos…</p>;
   }
 
   return (
     <div className="p-6">
       <h1 className="text-3xl text-gray-500 font-bold mb-4">Mis Motos</h1>
 
-      {/* Botones de filtro */}
-      <div className="flex gap-3 mb-6">
-        {estados.map((estado)) => (
+      {/* Filtros */}
+      <div className="flex gap-2 mb-6">
+        {ESTADOS.map((e) => (
           <button
-            key={estado}
-            onClick={() => setFiltro(estado)}
+            key={e}
+            onClick={() => setFiltro(e)}
             className={`px-3 py-1 rounded-full border ${
-              filtro === estado ? 'bg-black text-white' : 'bg-white text-black'
+              filtro === e ? 'bg-black text-white' : 'bg-white text-black'
             }`}
           >
-            {estado}
+            {e}
           </button>
         ))}
       </div>
 
+      {/* Listado o mensaje si está vacío */}
       {motosFiltradas.length === 0 ? (
         <p className="text-gray-600">No tienes motos en este estado.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {motosFiltradas.map(moto => (
+          {motosFiltradas.map((moto) => (
             <div key={moto.id} className="relative group">
               <Link href={`/dashboard/mis-motos/${moto.id}`}>
                 {moto.imagenPrincipal ? (
@@ -109,7 +120,7 @@ export default function MisMotosPage() {
                   </div>
                 )}
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold">{moto.titulo}</h3>
+                  <h3 className="text-lg text-gray-500 font-semibold">{moto.titulo}</h3>
                   <p className="text-green-600 font-bold">
                     ${moto.precio.toLocaleString()}
                   </p>

@@ -737,7 +737,11 @@ export const getMisMotos = async (req: Request, res: Response) => {
     const userId = req.userId!;
 
     const motos = await prisma.moto.findMany({
-      where: { vendedorId: userId },
+      where: { 
+        vendedorId: userId,
+        activa: true,  // Solo motos activas
+        vendida: false  // Solo motos no vendidas
+      },
       include: {
         imagenes: {
           orderBy: { orden: 'asc' }, // Mostrar siempre imagen principal primero

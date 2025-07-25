@@ -6,7 +6,6 @@ import morgan from 'morgan';
 import { connectDatabase, seedDatabase } from './config/database';
 import { config } from './config/environment';
 
-
 // Crear aplicación Express
 const app = express();
 
