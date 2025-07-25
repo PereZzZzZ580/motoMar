@@ -2,6 +2,7 @@
 'use client';
 
 import api from '@/lib/api';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -117,22 +118,16 @@ export default function PublicarMotoPage() {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  // crear la moto y subir imágenes
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (images.length === 0) {
-    toast.error('Debes subir al menos una imagen');
-    return;
-  }
+    if (images.length === 0) {
+      toast.error('Debes subir al menos una imagen');
+      return;
+    }
 
-  const form = new FormData();
-  images.forEach((img) => form.append('imagenes', img));
-
-  setLoading(true);
-  toast.loading('Publicando moto...');
-
-  try {
-    // 1. Crear moto sin imágenes
+    // 1) Crear la moto sin imágenes
     const motoData = {
       ...formData,
       precio: parseFloat(formData.precio),
@@ -141,34 +136,37 @@ export default function PublicarMotoPage() {
       kilometraje: parseInt(formData.kilometraje),
     };
 
-    const response = await api.post('/motos', motoData);
-    const motoId = response.data.moto.id;
+    setLoading(true);
+    toast.loading('Publicando moto...');
 
-    // 2. Crear FormData con imágenes
-    const form = new FormData();
-    images.forEach((img) => form.append('imagenes', img));
+    try {
+      const createResp = await api.post('/motos', motoData);
+      const motoId = createResp.data.moto.id;
 
-    // 3. Subir imágenes asociadas a la moto
-    await api.post(`/motos/${motoId}/imagenes`, form);
+      // 2) Adjuntar imágenes a la misma moto
+      const imagesForm = new FormData();
+      images.forEach((img) => imagesForm.append('imagenes', img));
 
-    toast.dismiss();
-    toast.success('¡Moto publicada con éxito!');
-    router.push(`/motos/${motoId}`);
-  } catch (error) {
-    toast.dismiss();
-    console.error('❌ Error publicando moto:', error);
+      await api.post(`/motos/${motoId}/imagenes`, imagesForm, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
 
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as { response?: { data?: { error?: string } } };
-      toast.error(axiosError.response?.data?.error || 'Error al publicar la moto');
-    } else {
-      toast.error('Error al publicar la moto');
+      toast.dismiss();
+      toast.success('¡Moto publicada con éxito!');
+      router.push(`/motos/${motoId}`);
+    } catch (error: unknown) {
+      toast.dismiss();
+      console.error('Error al publicar la moto:', error);
+      let msg = 'Error al publicar la moto';
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data as {error?: string; message?: string};
+        msg = data.error || data.message || msg;
+      }
+      
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">

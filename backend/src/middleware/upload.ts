@@ -1,18 +1,20 @@
-import fs from 'fs';
+// backend/src/middleware/uploads.ts
 import multer from 'multer';
-import path from 'path';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../config/cloudinary';
 
-// Crea la carpeta si no existe
-const uploadDir = path.join(__dirname, '..','..', 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, uploadDir),
-  filename: (_, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + path.extname(file.originalname));
-  }
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params:() => ({
+    folder: 'motomar',                        // subcarpeta en tu cuenta Cloudinary
+    allowed_formats: ['jpg','jpeg','png','webp'],
+    transformation: [{ width: 1200, crop: 'limit' }],
+  }),
 });
 
-export const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024, files: 5 },  // hasta 5 imágenes de <10 MB
+});
 
+export default upload;

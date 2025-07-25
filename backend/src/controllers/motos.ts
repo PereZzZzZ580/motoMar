@@ -226,6 +226,43 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+export const uploadMotoImages = async (req: Request, res: Response): Promise<void> => {
+  console.log('Subiendo imágenes para moto:', req.params.id);
+  console.log('Archivos recibidos:', req.files);
+  try {
+    const motoId = req.params.id;
+    // multer-storage-cloudinary expone la URL pública en file.path
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      res.status(400).json({ error: 'No se recibieron imágenes' });
+      return;
+    }
+
+    const imagenes = await Promise.all(
+      files.map((file, idx) =>
+        prisma.imagenMoto.create({
+          data: {
+            motoId,
+            url:   file.path,           // URL pública de Cloudinary
+            alt:   file.originalname,
+            orden: idx + 1,
+          },
+        })
+      )
+    );
+
+    res.status(201).json(imagenes);
+  } catch (error) {
+    console.error('❌ Error subiendo imágenes:', error);
+    res.status(500).json({
+      error:   'Error interno',
+      message: 'No se pudieron subir las imágenes',
+    });
+  }
+};
+    
+
+
 // =================================
 // OBTENER TODAS LAS MOTOS (CON FILTROS)
 // =================================
@@ -771,5 +808,6 @@ export default {
   getMyMotos,
   getMisMotos,
   updateMoto,
-  deleteMoto
+  deleteMoto,
+  uploadMotoImages,
 };

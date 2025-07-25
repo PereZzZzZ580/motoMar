@@ -10,8 +10,9 @@ import {
   updateMoto
 } from '../controllers/motos';
 import { authenticateToken, optionalAuth } from '../middleware/auth';
-import { upload } from '../middleware/upload';
+import  upload  from '../middleware/upload';
 import path from 'path';
+import { uploadMotoImages } from '../controllers/motos';
 
 const router = Router();
 
@@ -123,6 +124,7 @@ router.post(
   '/:id/imagenes',
   authenticateToken, // ✅ Asegura que el usuario esté autenticado
   upload.array('imagenes', 5), // ✅ Multer para manejar hasta 5 archivos
+  uploadMotoImages, // ✅ Controlador para manejar la lógica de subida
   async (req, res) => {
     try {
       const motoId = req.params.id;
