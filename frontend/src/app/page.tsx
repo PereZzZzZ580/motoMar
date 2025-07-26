@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,12 +38,18 @@ export default function HomePage() {
 
             {/* Auth buttons */}
             <div className="flex items-center space-x-4">
-              <button className="text-indigo-600 hover:text-indigo-700 font-medium">
-                Iniciar Sesión
-              </button>
-              <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+              <Link
+                href="/auth/login"
+                className="text-indigo-600 hover:text-indigo-700 font-medium"
+              >
+                 Iniciar Sesión
+              </Link>              
+              <Link
+                href="/auth/register"
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
                 Registrarse
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -92,7 +99,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
             <div className="text-3xl mb-4">🔒</div>
-            <h3 className="text-xl font-semibold mb-3">Compra Segura</h3>
+            <h3 className="text-xl text-gray-500 font-semibold mb-3">Compra Segura</h3>
             <p className="text-gray-600">
               Verificación automática de documentos, historial del vehículo y pagos protegidos.
             </p>
@@ -100,7 +107,7 @@ export default function HomePage() {
 
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
             <div className="text-3xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold mb-3">Trámites Fáciles</h3>
+            <h3 className="text-xl text-gray-500 font-semibold mb-3">Trámites Fáciles</h3>
             <p className="text-gray-600">
               Gestionamos todos los trámites del RUNT y agendamos citas automáticamente.
             </p>
@@ -108,7 +115,7 @@ export default function HomePage() {
 
           <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
             <div className="text-3xl mb-4">💬</div>
-            <h3 className="text-xl font-semibold mb-3">Chat Directo</h3>
+            <h3 className="text-xl text-gray-500 font-semibold mb-3">Chat Directo</h3>
             <p className="text-gray-600">
               Comunícate directamente con vendedores verificados en tiempo real.
             </p>

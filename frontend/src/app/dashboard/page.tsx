@@ -2,10 +2,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import api from '@/lib/api';
 import MotoCard from '@/components/MotoCard';
 import toast from 'react-hot-toast';
 //import { Response } from 'express';
+import api,{ authAPI } from '@/lib/api';
 
 interface Moto {
   id: string;
@@ -54,6 +54,15 @@ export default function DashboardPage() {
     total_transacciones: 0,
     marcas_populares: []
   });
+
+   const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
 
   useEffect(() => {
     fetchMotos();
@@ -143,10 +152,17 @@ export default function DashboardPage() {
     <div className="px-4 py-6 sm:px-0">
       {/* Header con estadísticas */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Marketplace de Motos
-        </h1>
-        
+         <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Marketplace de Motos
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-indigo-600 hover:text-indigo-700"
+          >
+            Cerrar Sesión
+          </button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">

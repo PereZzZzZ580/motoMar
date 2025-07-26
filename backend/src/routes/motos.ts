@@ -4,6 +4,7 @@ import { prisma } from '../config/database';
 import {
   createMoto,
   deleteMoto,
+  marcarVendida,
   getMisMotos,
   getMotoById,
   getMotos,
@@ -111,6 +112,11 @@ router.put('/:id', authenticateToken, updateMoto);
  */
 router.delete('/:id', authenticateToken, deleteMoto);
 
+/**
+ * POST /api/motos/:id/marcar-vendida
+ * Marcar una moto como vendida
+ */
+router.post('/:id/marcar-vendida', authenticateToken, marcarVendida);
 // ===============================================
 // RUTA PROTEGIDA: Subir imágenes para una moto
 // ===============================================
@@ -413,6 +419,7 @@ router.get('/info', (req, res) => {
         'GET /me/favoritos': 'Mis motos favoritas',
         'PUT /:id': 'Actualizar mi moto',
         'DELETE /:id': 'Eliminar mi moto',
+        'PATCH /:id/vender': 'Marcar moto como vendida',
         'POST /:id/favorito': 'Agregar/quitar favorito'
       }
     },

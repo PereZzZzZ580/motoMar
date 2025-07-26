@@ -16,7 +16,8 @@ Deploy: Vercel + Railway
 🏍️ Gestión de Motos
 ✅ Publicación con fotos múltiples
 ✅ Búsqueda avanzada con filtros
-✅ Tasación automática con IA
+✅ Marcar motos como vendidas
+✅ Tansacción automática con IA
 ✅ Historial de mantenimiento
 💬 Comunicación
 ✅ Chat en tiempo real

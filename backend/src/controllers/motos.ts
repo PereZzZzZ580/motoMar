@@ -822,6 +822,65 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
 };
 
 // =================================
+// MARCAR MOTO COMO VENDIDA
+// =================================
+export const marcarVendida = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!req.userId) {
+      res.status(401).json({
+        error: 'No autenticado',
+        message: 'Debes iniciar sesión',
+      });
+      return;
+    }
+
+    const moto = await prisma.moto.findUnique({ where: { id } });
+
+    if (!moto) {
+      res.status(404).json({ error: 'Moto no encontrada' });
+      return;
+    }
+
+    if (moto.vendedorId !== req.userId) {
+      res.status(403).json({
+        error: 'Sin permisos',
+        message: 'Solo puedes modificar tus propias motos',
+      });
+      return;
+    }
+
+    if (moto.vendida) {
+      res.status(400).json({ message: 'La moto ya está marcada como vendida' });
+      return;
+    }
+
+    await prisma.moto.update({
+      where: { id },
+      data: {
+        vendida: true,
+        activa: false,
+        updatedAt: new Date(),
+      },
+    });
+
+    await prisma.usuario.update({
+      where: { id: req.userId },
+      data: { totalVentas: { increment: 1 } },
+    });
+
+    res.json({ message: 'Moto marcada como vendida' });
+
+  } catch (error) {
+    console.error('❌ Error marcando moto como vendida:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+    });
+  }
+};
+
+// =================================
 // OBTENER MIS MOTOS (SOLO VENDEDOR) 
 // =================================
 // esta funcion es para obtener las motos del usuario autenticado
@@ -869,5 +928,6 @@ export default {
   getMisMotos,
   updateMoto,
   deleteMoto,
+  marcarVendida,
   uploadMotoImages,
 };

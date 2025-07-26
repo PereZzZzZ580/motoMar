@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { authAPI, auth } from '@/lib/api';
 
 interface AuthFormProps {
@@ -12,6 +13,7 @@ export default function AuthForm({ type }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [registroExitoso, setRegistroExitoso] = useState(false);
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -73,14 +75,9 @@ export default function AuthForm({ type }: AuthFormProps) {
         // Guardar token y usuario
         auth.setAuth(response.auth.token, response.user);
         
-        setSuccess('¡Registro exitoso! Redirigiendo...');
-        
-        // Redirigir al dashboard
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 1500);
+        setSuccess('¡Registro exitoso!');
+        setRegistroExitoso(true);
       }
-
     }  catch (err) {
   console.error('Error en autenticación:', err);
   
@@ -274,8 +271,19 @@ export default function AuthForm({ type }: AuthFormProps) {
             )}
 
             {success && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                {success}
+               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg space-y-2">
+                <div>{success}</div>
+                {registroExitoso && (
+                  <div className="flex justify-center space-x-4">
+                    <Link href="/" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                      Ir a Inicio
+                    </Link>
+                    <span>|</span>
+                    <Link href="/dashboard" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                      Ir al Dashboard
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 
