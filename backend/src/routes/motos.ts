@@ -11,7 +11,6 @@ import {
 } from '../controllers/motos';
 import { authenticateToken, optionalAuth } from '../middleware/auth';
 import  upload  from '../middleware/upload';
-import path from 'path';
 import { uploadMotoImages } from '../controllers/motos';
 
 const router = Router();
@@ -124,68 +123,7 @@ router.post(
   '/:id/imagenes',
   authenticateToken, // ✅ Asegura que el usuario esté autenticado
   upload.array('imagenes', 5), // ✅ Multer para manejar hasta 5 archivos
-  uploadMotoImages, // ✅ Controlador para manejar la lógica de subida
-  async (req, res) => {
-    try {
-      const motoId = req.params.id;
-      const files = req.files as Express.Multer.File[];
-
-      // ✅ Verificar que se recibieron archivos
-      if (!files || files.length === 0) {
-      console.error('No se recibieron archivos en req.files:', req.files);
-      return res.status(400).json({ error: 'No se subieron imágenes' });
-    }
-
-
-      
-      // ✅ Verificar que la moto existe
-      const moto = await prisma.moto.findUnique({
-        where: { id: motoId }
-      });
-
-      if (!moto) {
-        return res.status(404).json({
-          error: 'Moto no encontrada'
-        });
-      }
-
-      // ✅ Crear registros de imágenes en la base de datos
-      // === Después ===
-// Crear cada imagen individualmente para capturar el índice y el registro resultante
-const imagenesCreadas = await Promise.all(
-  files.map((file, index) =>
-    prisma.imagenMoto.create({
-      data: {
-        motoId,
-        url: file.filename,
-        alt: `Imagen ${index + 1} de la moto ${motoId}`,
-        orden: index,
-      }
-    })
-  )
-);
-
-// imagenPrincipal, asignar la primera subida
-    if (!moto.imagenPrincipal && imagenesCreadas.length > 0) {
-      await prisma.moto.update({
-        where: { id: motoId },
-        data: { imagenPrincipal: imagenesCreadas[0].url },
-      });
-    }
-
-    
-      res.json({
-        message: '🖼️ Imágenes subidas correctamente',
-        imagenes : imagenesCreadas
-      });
-
-    } catch (error) {
-      console.error('❌ Error al subir imágenes:', error);
-      res.status(500).json({
-        error: 'Error interno al subir imágenes'
-      });
-    }
-  }
+  uploadMotoImages // ✅ Controlador para manejar la lógica de subida
 );
 
 

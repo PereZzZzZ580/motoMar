@@ -54,7 +54,6 @@ export default function MotoDetallePage() {
   const [loading, setLoading] = useState(true);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const API = process.env.NEXT_PUBLIC_API_URL || '';
   const placeholder = 'https://images.unsplash.com/photo-…'; // Ruta al placeholder de imagen
   const motoId = params.id as string;
 
@@ -145,11 +144,7 @@ export default function MotoDetallePage() {
           {/* Imagen */}
           <div className="relative w-full h-96 bg-white rounded-lg shadow-md overflow-hidden">
             <Image
-              src={
-                currentImage?.url
-                  ? `${API}/uploads/${currentImage.url}`
-                  : placeholder
-              }
+              src={currentImage?.url  || placeholder}            
               alt={`${moto.titulo} imagen ${currentIdx + 1}`}
               fill       //cubre todo el contenedor
               style ={{ objectFit: 'cover' }}   // Mantiene la proporción de la imagen

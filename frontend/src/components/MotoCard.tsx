@@ -64,13 +64,8 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   };
 
   
-
-  const API = process.env.NEXT_PUBLIC_API_URL;
-  const thumbnail = moto.imagenes[0]
-    ? `${API}/uploads/${moto.imagenes[0].url}`
-    : moto.imagenPrincipal
-      ? `${API}/uploads/${moto.imagenPrincipal}`
-    : '/no-image.png'; // Placeholder local
+   const thumbnail =
+    moto.imagenes [ 0 ]?. url || moto.imagenPrincipal || '/no-image.png' ;
 
 
   return (

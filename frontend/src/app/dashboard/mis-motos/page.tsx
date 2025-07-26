@@ -25,7 +25,6 @@ export default function MisMotosPage() {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>('TODAS');
 
-  const API = process.env.NEXT_PUBLIC_API_URL || '';
 
   // ─── 1) Traer SOLO con getMisMotos(), sin llamadas extra que fallen ─────────
   const fetchMotos = async () => {
@@ -107,7 +106,7 @@ export default function MisMotosPage() {
               <Link href={`/dashboard/mis-motos/${moto.id}`}>
                 {moto.imagenPrincipal ? (
                   <Image
-                    src={`${API}/uploads/${moto.imagenPrincipal}`}
+                    src={moto.imagenPrincipal}
                     alt={moto.titulo}
                     width={400}
                     height={300}
