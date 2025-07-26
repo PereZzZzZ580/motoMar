@@ -1,6 +1,7 @@
  // src/controllers/motos.ts
 import { Request, Response } from 'express';
 import { prisma } from '../config/database';
+import { z } from 'zod';
 
 // Interfaces para request bodies
 interface CreateMotoRequest {
@@ -52,6 +53,40 @@ interface SearchFilters {
   papalesAlDia?: boolean;
   query?: string; // Búsqueda por texto
 }
+
+const motoSchema = z.object({
+   titulo: z.string().min(2),
+  descripcion: z.string().min(20),
+  precio: z.coerce.number().positive(),
+  negociable: z.boolean().default(true),
+
+  marca: z.string().min(2),
+  modelo: z.string().min(1),
+  año: z.coerce.number().int()
+    .gte(1950)
+    .lte(new Date().getFullYear() + 1),
+  cilindraje: z.coerce.number().int().positive(),
+  kilometraje: z.coerce.number().int().nonnegative(),
+  color: z.string().min(2),
+  combustible: z.enum(['GASOLINA','ELECTRICA','HIBRIDA']).default('GASOLINA'),
+  transmision: z.enum(['MANUAL','AUTOMATICA','SEMI_AUTOMATICA']).default('MANUAL'),
+  estado: z.enum(['NUEVA','USADO','PARA_REPUESTOS']).default('USADO'),
+  condicion: z.enum(['EXCELENTE','MUY_BUENA','BUENA','REGULAR','NECESITA_REPARACION']).default('BUENA'),
+
+  soatVigente: z.boolean().default(false),
+  tecnoVigente: z.boolean().default(false),
+  papalesAlDia: z.boolean().default(false),
+  frenos: z.enum(['DISCO','TAMBOR','MIXTO','ABS','CBS']).optional(),
+  llantas: z.enum(['NUEVAS','BUENAS','REGULARES','NECESITAN_CAMBIO']).optional(),
+  mantenimiento: z.string().optional(),
+  accesorios: z.string().optional(),
+
+  ciudad: z.string().min(2),
+  departamento: z.string().min(2),
+  barrio: z.string().optional(),
+
+  imagenes: z.array(z.string().url()).optional(),
+});
 
 // =================================
 // CREAR NUEVA MOTO
