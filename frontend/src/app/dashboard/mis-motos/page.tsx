@@ -102,15 +102,18 @@ export default function MisMotosPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {motosFiltradas.map((moto) => (
-            <div key={moto.id} className="relative group">
-              <Link href={`/dashboard/mis-motos/${moto.id}`}>
+            <div
+              key={moto.id}
+              className="relative group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg"
+            >
+              <Link href={`/motos/${moto.id}`}>
                 {moto.imagenPrincipal ? (
                   <Image
                     src={moto.imagenPrincipal}
                     alt={moto.titulo}
                     width={400}
                     height={300}
-                    className="object-cover w-full h-48"
+                    className="w-full h-60 object-cover"
                     priority
                   />
                 ) : (
