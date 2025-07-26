@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.14.3",
+    "@cloudinary/url-gen": "^1.21.0",
     "axios": "^1.10.0",
+    "motomar": "file:..",
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",

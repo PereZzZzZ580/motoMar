@@ -30,7 +30,7 @@ export default function MisMotosPage() {
   // ─── 1) Traer SOLO con getMisMotos(), sin llamadas extra que fallen ─────────
   const fetchMotos = async () => {
     try {
-      const data = await getMisMotos();  // ← aquí obtienes [{…}, …] o []
+      const data = await getMisMotos();  // realiza la llamada al backend
       setMotos(data);
     } catch (err) {
       console.error('❌ Error cargando tus motos:', err);
