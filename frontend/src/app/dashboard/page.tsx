@@ -158,7 +158,7 @@ export default function DashboardPage() {
           </h1>
           <button
             onClick={handleLogout}
-            className="text-sm text-indigo-600 hover:text-indigo-700"
+            className="text-sm text-blue-700 hover:text-blue-800"
           >
             Cerrar Sesión
           </button>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
+              <div className="p-3 rounded-full bg-blue-100 text-blue-700">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-full bg-purple-100 text-purple-600">
+              <div className="p-3 rounded-full bg-blue-100 text-blue-700">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -230,11 +230,11 @@ export default function DashboardPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por marca, modelo, ciudad..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
           />
           <button
             type="submit"
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="px-6 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
           >
             Buscar
           </button>
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.marca || ''}
                   onChange={(e) => handleFilterChange({ marca: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 >
                   <option value="">Todas las marcas</option>
                   <option value="Honda">Honda</option>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                   value={filters.precioMin || ''}
                   onChange={(e) => handleFilterChange({ precioMin: parseInt(e.target.value) })}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                   value={filters.precioMax || ''}
                   onChange={(e) => handleFilterChange({ precioMax: parseInt(e.target.value) })}
                   placeholder="50000000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
               </div>
 
@@ -306,7 +306,7 @@ export default function DashboardPage() {
                   value={filters.ciudad || ''}
                   onChange={(e) => handleFilterChange({ ciudad: e.target.value })}
                   placeholder="Ej: Armenia"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
               </div>
 
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.departamento || ''}
                   onChange={(e) => handleFilterChange({ departamento: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 >
                   <option value="">Todos los departamentos</option>
                   <option value="Antioquia">Antioquia</option>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.ordenPor || ''}
                   onChange={(e) => handleFilterChange({ ordenPor: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
                 >
                   <option value="">Más recientes</option>
                   <option value="precio_asc">Precio: Menor a Mayor</option>
@@ -367,7 +367,7 @@ export default function DashboardPage() {
       {/* Grid de motos */}
       {loading ? (
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
           <p className="mt-4 text-gray-600">Cargando motos...</p>
         </div>
       ) : motos.length > 0 ? (

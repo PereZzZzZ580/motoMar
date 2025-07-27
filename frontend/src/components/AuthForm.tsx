@@ -105,11 +105,11 @@ export default function AuthForm({ type }: AuthFormProps) {
   const isLogin = type === 'login';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="text-4xl font-bold text-indigo-600 mb-2">
+          <div className="text-4xl font-bold text-blue-700 mb-2">
             🏍️ MotoMar
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
@@ -141,7 +141,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     required={!isLogin}
                     value={formData.nombre}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="Tu nombre"
                   />
                 </div>
@@ -156,7 +156,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     required={!isLogin}
                     value={formData.apellido}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="Tu apellido"
                   />
                 </div>
@@ -175,7 +175,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder="tu@email.com"
               />
             </div>
@@ -192,7 +192,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder={isLogin ? "Tu contraseña" : "Mínimo 8 caracteres"}
               />
               {!isLogin && (
@@ -215,7 +215,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     type="tel"
                     value={formData.telefono}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="3001234567"
                   />
                 </div>
@@ -231,7 +231,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                       type="text"
                       value={formData.ciudad}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                       placeholder="Armenia"
                     />
                   </div>
@@ -244,7 +244,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                       name="departamento"
                       value={formData.departamento}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     >
                       <option value="">Seleccionar</option>
                       <option value="Antioquia">Antioquia</option>
@@ -275,11 +275,11 @@ export default function AuthForm({ type }: AuthFormProps) {
                 <div>{success}</div>
                 {registroExitoso && (
                   <div className="flex justify-center space-x-4">
-                    <Link href="/" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                    <Link href="/" className="text-blue-700 hover:text-blue-800 font-medium">
                       Ir a Inicio
                     </Link>
                     <span>|</span>
-                    <Link href="/dashboard" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                    <Link href="/dashboard" className="text-blue-700 hover:text-blue-800 font-medium">
                       Ir al Dashboard
                     </Link>
                   </div>
@@ -294,7 +294,7 @@ export default function AuthForm({ type }: AuthFormProps) {
               className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800'
+                  : 'bg-blue-700 hover:bg-blue-800 active:bg-blue-900'
               }`}
             >
               {loading ? (
@@ -316,7 +316,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
                 <a
                   href={isLogin ? '/auth/register' : '/auth/login'}
-                  className="ml-2 text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="ml-2 text-blue-700 hover:text-blue-800 font-medium"
                 >
                   {isLogin ? 'Regístrate aquí' : 'Inicia sesión'}
                 </a>
@@ -328,11 +328,11 @@ export default function AuthForm({ type }: AuthFormProps) {
         {/* Footer */}
         <div className="text-center text-sm text-gray-500">
           Al continuar, aceptas nuestros{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">
+          <a href="#" className="text-blue-700 hover:text-blue-800">
             Términos de Uso
           </a>{' '}
           y{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">
+          <a href="#" className="text-blue-700 hover:text-blue-800">
             Política de Privacidad
           </a>
         </div>

@@ -112,12 +112,12 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
       <div className="p-4">
         <Link href={`/motos/${moto.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-700 transition-colors">
             {moto.titulo}
           </h3>
         </Link>
         
-        <p className="text-2xl font-bold text-indigo-600 mt-2">
+        <p className="text-2xl font-bold text-blue-700 mt-2">
           {formatPrice(moto.precio)}
         </p>
 
@@ -140,7 +140,7 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
           <div className="flex items-center text-sm">
-            <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold text-xs">
+            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold text-xs">
               {moto.vendedor?.nombre?.charAt(0) || 'U'}
             </div>
             <span className="ml-2 text-gray-700">

@@ -8,30 +8,27 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
-              <div className="text-2xl font-bold text-indigo-600">
+              <div className="text-2xl font-bold text-blue-700">
                 🏍️ MotoMar
               </div>
-              <span className="ml-2 text-gray-500 text-sm">
-                Marketplace de Motos
-              </span>
             </div>
 
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-700 hover:text-indigo-600 transition-colors">
+              <a href="#" className="text-gray-700 hover:text-blue-700 transition-colors">
                 Explorar Motos
               </a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600 transition-colors">
+              <a href="#" className="text-gray-700 hover:text-blue-700 transition-colors">
                 Vender
               </a>
-              <a href="#" className="text-gray-700 hover:text-indigo-600 transition-colors">
+              <a href="#" className="text-gray-700 hover:text-blue-700 transition-colors">
                 Favoritos
               </a>
             </nav>
@@ -40,13 +37,13 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <Link
                 href="/auth/login"
-                className="text-indigo-600 hover:text-indigo-700 font-medium"
+                className="text-blue-700 hover:text-blue-800 font-medium"
               >
                  Iniciar Sesión
               </Link>              
               <Link
                 href="/auth/register"
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
               >
                 Registrarse
               </Link>
@@ -59,7 +56,7 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Encuentra la <span className="text-indigo-600">Moto Perfecta</span>
+            Encuentra la <span className="text-blue-700">Moto Perfecta</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             El marketplace más seguro de Colombia para comprar y vender motocicletas. 
@@ -74,9 +71,9 @@ export default function HomePage() {
                 placeholder="Buscar motos por marca, modelo o ubicación..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-lg"
+                className="w-full px-6 py-4 text-gray-500 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors">
                 🔍 Buscar
               </button>
             </div>
@@ -87,7 +84,7 @@ export default function HomePage() {
             {['Honda', 'Yamaha', 'Suzuki', 'Kawasaki', 'Bajaj'].map((marca) => (
               <button
                 key={marca}
-                className="bg-white text-gray-700 px-4 py-2 rounded-full border border-gray-300 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm"
+                className="bg-white text-gray-700 px-4 py-2 rounded-full border border-gray-300 hover:border-blue-700 hover:text-blue-700 transition-all shadow-sm"
               >
                 {marca}
               </button>
@@ -126,19 +123,19 @@ export default function HomePage() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-indigo-600 mb-2">1,200+</div>
+              <div className="text-3xl font-bold text-blue-700 mb-2">1,200+</div>
               <div className="text-gray-600">Motos Disponibles</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-indigo-600 mb-2">850+</div>
+              <div className="text-3xl font-bold text-blue-700 mb-2">850+</div>
               <div className="text-gray-600">Ventas Exitosas</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-indigo-600 mb-2">4.8⭐</div>
+              <div className="text-3xl font-bold text-blue-700 mb-2">4.8⭐</div>
               <div className="text-gray-600">Calificación Promedio</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-indigo-600 mb-2">25</div>
+              <div className="text-3xl font-bold text-blue-700 mb-2">25</div>
               <div className="text-gray-600">Ciudades</div>
             </div>
           </div>
@@ -153,7 +150,7 @@ export default function HomePage() {
             Únete a miles de usuarios que ya confían en MotoMar
           </p>
           <div className="space-x-4">
-            <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg">
+            <button className="bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-800 transition-colors shadow-lg">
               Explorar Motos
             </button>
             <button className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700 transition-colors shadow-lg">
