@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { hashPassword, comparePassword, validatePasswordStrength } from '../utils/bcrypt';
 import { generateTokenResponse, JWTPayload } from '../utils/jwt';
+import { sendWelcomeEmail } from '../utils/email';
 
 // Interfaces para request bodies
 interface RegisterRequest {
@@ -115,6 +116,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     };
 
     const tokenResponse = generateTokenResponse(tokenPayload);
+
+    // Enviar email de bienvenida (mejor no bloquear el registro en caso de fallo)
+    sendWelcomeEmail(newUser.email, newUser.nombre).catch((err) => {
+      console.error('❌ Error al enviar email de bienvenida:', err);
+    });
 
     // Respuesta exitosa (sin la contraseña)
     res.status(201).json({
