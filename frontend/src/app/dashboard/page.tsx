@@ -158,7 +158,8 @@ export default function DashboardPage() {
           </h1>
           <button
             onClick={handleLogout}
-            className="text-sm text-blue-700 hover:text-blue-800"
+            type="button"
+            className="text-sm px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 hover:cursor-pointer transition-colors"
           >
             Cerrar Sesión
           </button>
