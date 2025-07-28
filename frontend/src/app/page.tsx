@@ -16,7 +16,7 @@ export default function HomePage() {
             {/* Logo */}
             <div className="flex items-center">
               <div className="text-2xl font-bold text-blue-700">
-                🏍️ MotoMar
+                🏍️ Velomark
               </div>
             </div>
 
@@ -147,7 +147,7 @@ export default function HomePage() {
             ¿Listo para encontrar tu moto ideal?
           </h2>
           <p className="text-gray-600 mb-8">
-            Únete a miles de usuarios que ya confían en MotoMar
+            Únete a miles de usuarios que ya confían en VeloMark
           </p>
           <div className="space-x-4">
             <button className="bg-blue-700 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-800 transition-colors shadow-lg">
@@ -165,7 +165,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="text-xl font-bold mb-4">🏍️ MotoMar</div>
+              <div className="text-xl font-bold mb-4">🏍️ Velomark</div>
               <p className="text-gray-400">
                 El marketplace más seguro para comprar y vender motos en Colombia.
               </p>
@@ -198,7 +198,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 MotoMar. Todos los derechos reservados.</p>
+            <p>&copy; 2025 VeloMark. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

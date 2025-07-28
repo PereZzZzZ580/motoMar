@@ -120,7 +120,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // Enviar email de bienvenida (mejor no bloquear el registro en caso de fallo)
     sendWelcomeEmail(newUser.email, newUser.nombre).catch((err) => {
       console.error('❌ Error al enviar email de bienvenida:', err);
-    });
+    });                      
 
     // Respuesta exitosa (sin la contraseña)
     res.status(201).json({
