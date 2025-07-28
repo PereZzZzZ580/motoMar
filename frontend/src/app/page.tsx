@@ -1,11 +1,49 @@
  // src/app/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import MotoCard from '@/components/MotoCard';
+import { motosAPI, Moto } from '@/lib/api';
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMarca, setSelectedMarca] = useState('');
+  const [motos, setMotos] = useState<Moto[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchMotos = async (params?: { query?: string; marca?: string }) => {
+    try {
+      setLoading(true);
+      const data = await motosAPI.getMotos({
+        query: params?.query,
+        marca: params?.marca,
+        limit: 8,
+      });
+      setMotos(data.motos || []);
+    } catch (error) {
+      console.error('Error al obtener motos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // cargar motos destacadas al iniciar
+    fetchMotos();
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSelectedMarca('');
+    fetchMotos({ query: searchTerm });
+  };
+
+  const handleMarcaClick = (marca: string) => {
+    setSelectedMarca(marca);
+    setSearchTerm('');
+    fetchMotos({ marca });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
@@ -64,7 +102,7 @@ export default function HomePage() {
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
             <div className="relative">
               <input
                 type="text"
@@ -73,23 +111,47 @@ export default function HomePage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-6 py-4 text-gray-500 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors">
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              >
                 🔍 Buscar
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Quick filters */}
           <div className="flex justify-center space-x-4 mb-12">
             {['Honda', 'Yamaha', 'Suzuki', 'Kawasaki', 'Bajaj'].map((marca) => (
               <button
                 key={marca}
-                className="bg-white text-gray-700 px-4 py-2 rounded-full border border-gray-300 hover:border-blue-700 hover:text-blue-700 transition-all shadow-sm"
+                onClick={() => handleMarcaClick(marca)}
+                className={`px-4 py-2 rounded-full border transition-all shadow-sm ${selectedMarca === marca ? 'bg-blue-700 text-white border-blue-700' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-700 hover:text-blue-700'}`}
               >
                 {marca}
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Resultados */}
+        <div className="mb-16">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Cargando motos...</p>
+            </div>
+          ) : motos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {motos.map((moto) => (
+                <MotoCard key={moto.id} moto={moto} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-lg shadow">
+              <p className="text-gray-600">No se encontraron motos</p>
+            </div>
+          )}
         </div>
 
         {/* Features Grid */}
