@@ -49,7 +49,7 @@ Fase 1 - MVP (4 meses) 🔄
 Fase 2 - Escalamiento (8 meses) 📋
  App móvil React Native
  Integración RUNT completa
- IA para tasación
+ IA para transacción
  Sistema de reputación
  Panel administrativo
 Fase 3 - Empresa (12 meses) 🚀
@@ -66,7 +66,7 @@ VS Code
 Instalación
 bash
 # Clonar repositorio
-git clone https://github.com/tuusuario/motomar.git
+git clone https://github.com/PereZzZzZ580/motomar.git
 cd motomar
 
 # Instalar dependencias
