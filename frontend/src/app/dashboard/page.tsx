@@ -120,33 +120,37 @@ export default function DashboardPage() {
   };
 
   const toggleFavorito = async (motoId: string) => {
-  try {
-    const Response = await api.post(`/motos/${motoId}/favorito`);
-    
-    // Actualizar el estado local inmediatamente
-    setMotos(prev => prev.map(moto => 
-      moto.id === motoId 
-        ? { 
-            ...moto, 
-            es_favorito: !moto.es_favorito,
-            _count: {
-              ...moto._count,
-              favoritos: !moto.es_favorito 
-                ? (moto._count?.favoritos || 0) + 1 
-                : (moto._count?.favoritos || 0) - 1
-            }
-          }
-        : moto
-    ));
+    try {
+          await api.post(`/motos/${motoId}/favorito`);
 
-    const motoActual = motos.find(m => m.id === motoId);
-    toast.success(!motoActual?.es_favorito ? '¡Agregado a favoritos!' : 'eliminado de favoritos');
-  } catch (error) {
-    console.error('Error al actualizar favorito:', error);
-    toast.error('Error al actualizar favoritos');
-  }
-};
+          setMotos((prev) =>
+            prev.map((moto) =>
+              moto.id === motoId
+                ? {
+                    ...moto,
+                    es_favorito: !moto.es_favorito,
+                    _count: {
+                      ...moto._count,
+                      favoritos: !moto.es_favorito
+                        ? (moto._count?.favoritos || 0) + 1
+                        : (moto._count?.favoritos || 0) - 1,
+                    },
+                  }
+                : moto
+            )
+          );
 
+  const motoActual = motos.find((m) => m.id === motoId);
+      toast.success(
+        !motoActual?.es_favorito
+          ? '¡Agregado a favoritos!'
+          : 'Eliminado de favoritos'
+      );
+    } catch (error) {
+      console.error('Error al actualizar favorito:', error);
+      toast.error('Error al actualizar favoritos');
+    }
+  };
 
   return (
     <div className="px-4 py-6 sm:px-0">
