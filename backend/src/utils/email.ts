@@ -28,4 +28,27 @@ export const sendWelcomeEmail = async (to: string, nombre: string) => {
   } catch (error) {
     console.error('❌ Error enviando email de bienvenida:', error);
   }
+  };
+
+export const sendLoginEmail = async (to: string, nombre: string) => {
+  if (!config.SMTP_HOST || !config.SMTP_USER || !config.SMTP_PASS) {
+    console.warn('SMTP configuration missing, skipping email sending');
+    return;
+  }
+  try {
+    const loginTime = new Date().toLocaleString('es-CO', {
+      timeZone: 'America/Bogota',
+    });
+    await transporter.sendMail({
+      from: `MotoMar <${config.SMTP_USER}>`,
+      to,
+      subject: 'Nuevo inicio de sesión',
+      text: `Hola ${nombre}, has iniciado sesión en MotoMar el ${loginTime}. Si no fuiste tú, cambia tu contraseña de inmediato.`,
+      html: `<p>Hola <b>${nombre}</b>, has iniciado sesión en MotoMar el ${loginTime}.</p><p>Si no fuiste tú, <a href="${config.FRONTEND_URL}/auth/reset-password">cambia tu contraseña</a> de inmediato.</p>`,
+    });
+    console.log(`\u2709\uFE0F Email de login enviado a ${to}`);
+  } catch (error) {
+    console.error('❌ Error enviando email de login:', error);
+  }
+
 };

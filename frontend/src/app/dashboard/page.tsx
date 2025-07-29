@@ -157,7 +157,7 @@ export default function DashboardPage() {
       {/* Header con estadísticas */}
       <div className="mb-8">
          <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-700">
             Marketplace de Motos
           </h1>
           <button

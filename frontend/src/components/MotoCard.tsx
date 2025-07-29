@@ -36,6 +36,7 @@ interface MotoCardProps {
   onFavoriteToggle?: (motoId: string) => void;
 }
 
+// Componente MotoCard para mostrar información de una moto
 export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault(); // Evitar navegación
@@ -64,9 +65,18 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   };
 
   
-   const thumbnail =
-    moto.imagenes [ 0 ]?. url || moto.imagenPrincipal || '/no-image.png' ;
+// Usar la primera imagen disponible o una imagen por defecto
+  let thumbnail =
+    moto.imagenes?.[0]?.url ?? moto.imagenPrincipal ?? '/no-image.png';
 
+  // Normalizar para next/image: debe iniciar con http(s) o '/'
+  if (
+    thumbnail &&
+    !thumbnail.startsWith('http') &&
+    !thumbnail.startsWith('/')
+  ) {
+    thumbnail = `/uploads/${thumbnail}`;
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">

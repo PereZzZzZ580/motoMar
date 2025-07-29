@@ -79,7 +79,7 @@ export default function MisMotosPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl text-gray-500 font-bold mb-4">Mis Motos</h1>
+      <h1 className="text-3xl text-gray-700 font-bold mb-4">Mis Motos</h1>
 
       {/* Filtros */}
       <div className="flex gap-2 mb-6">

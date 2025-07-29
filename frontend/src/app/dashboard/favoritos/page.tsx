@@ -75,7 +75,7 @@ export default function FavoritosPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Mis Favoritos</h1>
+      <h1 className="text-3xl font-bold text-gray-700 mb-6">Mis Favoritos</h1>
       {motos.length === 0 ? (
         <p className="text-gray-600">No tienes motos favoritas.</p>
       ) : (

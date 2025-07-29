@@ -47,7 +47,13 @@ router.get('/me/favoritos', authenticateToken, async (req, res) => {
     const userId = req.userId!;
 
     const favoritos = await prisma.favoritoMoto.findMany({
-      where: { usuarioId: userId },
+      where: { 
+        usuarioId: userId, 
+        moto:{
+           activa: true, 
+            vendida: false
+        }
+      },
       include: {
         moto: {
           include: {

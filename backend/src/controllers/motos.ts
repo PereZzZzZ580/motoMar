@@ -806,6 +806,11 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
         updatedAt: new Date()
       }
     });
+  
+    // Eliminar de favoritos todas las refencias a esta moto
+    await prisma.favoritoMoto.deleteMany({
+      where: { motoId: id }
+    });
 
     res.json({
       message: 'Moto eliminada exitosamente',

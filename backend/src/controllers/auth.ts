@@ -2,8 +2,11 @@
 import { Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { hashPassword, comparePassword, validatePasswordStrength } from '../utils/bcrypt';
-import { generateTokenResponse, JWTPayload } from '../utils/jwt';
-import { sendWelcomeEmail } from '../utils/email';
+import { generateTokenResponse } from '../utils/jwt';
+import type { JWTPayload } from '../utils/jwt';
+import { sendWelcomeEmail, sendLoginEmail } from '../utils/email';
+import { send } from 'process';
+
 
 // Interfaces para request bodies
 interface RegisterRequest {
@@ -220,6 +223,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const tokenResponse = generateTokenResponse(tokenPayload);
 
+    // Enviar notificacion de inicio de sesion 
+    sendLoginEmail(user.email, user.nombre).catch((err: any) => {
+      console.error('❌ Error al enviar email de inicio de sesión:', err);
+    });
+    
     // Respuesta exitosa
     res.json({
       message: 'Login exitoso',
