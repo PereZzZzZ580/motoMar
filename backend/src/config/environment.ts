@@ -33,13 +33,20 @@ export const config = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   
+  // Google OAuth
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  GOOGLE_CALLBACK_URL:
+    process.env.GOOGLE_CALLBACK_URL ||
+    'http://localhost:3001/api/auth/google/callback',
+    
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: 15 * 60 * 1000, // 15 minutos
   RATE_LIMIT_MAX_REQUESTS: 100,
   
   // Upload limits
   MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
-  MAX_FILES_PER_UPLOAD: 10,
+  MAX_FILES_PER_UPLOAD: 10, 
 };
 
 // Validar variables críticas

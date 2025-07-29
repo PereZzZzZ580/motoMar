@@ -102,6 +102,12 @@ export default function AuthForm({ type }: AuthFormProps) {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || '';
+    const redirectURL = baseURL ? `${baseURL}/api/auth/google` : '/api/auth/google';
+    window.location.href = redirectURL;
+  };
+
   const isLogin = type === 'login';
 
   return (
@@ -125,6 +131,19 @@ export default function AuthForm({ type }: AuthFormProps) {
 
         {/* Formulario */}
         <div className="bg-white p-8 rounded-xl shadow-lg">
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full mb-6 py-3 px-4 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          >
+            <svg className="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+              <path fill="#EA4335" d="M488 261.8c0-17.8-1.6-35-4.6-51.8H249v98h136.8c-5.9 32.2-23.5 59.5-50.2 77.8v64h81.3c47.5-43.7 74.9-108.1 74.9-188z"/>
+              <path fill="#34A853" d="M249 512c67.5 0 124.3-22.3 165.7-60.7l-81.3-64c-23.1 15.6-52.6 24.6-84.4 24.6-65 0-120-43.9-139.7-102.7H24.1v64.6C65.3 466.4 149.3 512 249 512z"/>
+              <path fill="#4A90E2" d="M109.3 308.3C98.1 274.5 98.1 237.5 109.3 203.7V139h-85.2C8.5 185.9 0 241.6 0 256s8.5 70.1 24.1 117l85.2-64.7z"/>
+              <path fill="#FBBC05" d="M249 100.1c35.4 0 67.1 12.2 92.2 32.3l69.1-69.1C360 24.3 305.5 0 249 0 149.3 0 65.3 45.6 24.1 117l85.2 64.7C129 144 184 100.1 249 100.1z"/>
+            </svg>
+            Continuar con Google
+          </button>
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Nombre y Apellido (solo registro) */}

@@ -5,7 +5,6 @@ import { hashPassword, comparePassword, validatePasswordStrength } from '../util
 import { generateTokenResponse } from '../utils/jwt';
 import type { JWTPayload } from '../utils/jwt';
 import { sendWelcomeEmail, sendLoginEmail } from '../utils/email';
-import { send } from 'process';
 
 
 // Interfaces para request bodies

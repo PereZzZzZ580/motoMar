@@ -13,6 +13,7 @@ Deploy: Vercel + Railway
 ✅ Validación automática de documentos RUNT
 ✅ Sistema de reputación y calificaciones
 ✅ Pagos seguros con escrow
+✅ Inicio de sesión con Google
 🏍️ Gestión de Motos
 ✅ Publicación con fotos múltiples
 ✅ Búsqueda avanzada con filtros
