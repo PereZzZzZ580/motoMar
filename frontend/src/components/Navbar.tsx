@@ -24,6 +24,11 @@ export default function Navbar() {
   }, []);
 
   const fetchUserProfile = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      return;
+    }
     try {
       const response = await api.get('/auth/me');
       setUser(response.data.usuario);
@@ -51,15 +56,19 @@ export default function Navbar() {
               <Link href="/" className="hover:bg-blue-800 px-3 py-2 rounded-md">
                 Inicio
               </Link>
-              <Link href="/dashboard/mis-motos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-              Mis Motos
-              </Link>
-              <Link href="/dashboard/favoritos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-              Favoritos
-              </Link>
-              <Link href="/dashboard/publicar" className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
-                + Publicar Moto
-              </Link>
+              { user && (
+                  <>
+                  <Link href="/dashboard/mis-motos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Mis Motos
+                  </Link>
+                  <Link href="/dashboard/favoritos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Favoritos
+                  </Link>
+                  <Link href="/dashboard/publicar" className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
+                    + Publicar Moto
+                  </Link>
+                  </>
+              )}  
             </div>
           </div>
 
@@ -175,4 +184,4 @@ export default function Navbar() {
       )}
     </nav>
   );
-}
+ }
