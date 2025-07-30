@@ -55,9 +55,9 @@ export default function AuthForm({ type }: AuthFormProps) {
         
         setSuccess('¡Login exitoso! Redirigiendo...');
         
-        // Redirigir al dashboard
+        // Redirigir al inicio
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = '/';
         }, 1500);
 
       } else {
@@ -298,8 +298,8 @@ export default function AuthForm({ type }: AuthFormProps) {
                       Ir a Inicio
                     </Link>
                     <span>|</span>
-                    <Link href="/dashboard" className="text-blue-700 hover:text-blue-800 font-medium">
-                      Ir al Dashboard
+                    <Link href="/" className="text-blue-700 hover:text-blue-800 font-medium">
+                      Ir al Inicio
                     </Link>
                   </div>
                 )}

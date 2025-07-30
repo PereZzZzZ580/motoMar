@@ -24,7 +24,7 @@ export default function GoogleCallbackPage() {
       .then((user) => {
         auth.setAuth(token, user);
         setMessage('Autenticación exitosa. Redirigiendo...');
-        setTimeout(() => router.push('/dashboard'), 1500);
+        setTimeout(() => router.push('/'), 1500);
       })
       .catch(() => {
         setError('No se pudo obtener la información del usuario');
