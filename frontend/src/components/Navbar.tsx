@@ -42,20 +42,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <span className="text-2xl mr-2">🏍️</span>
               <span className="font-bold text-xl">MotoMar</span>
             </Link>
             
             <div className="hidden md:flex ml-10 space-x-4">
-              <Link href="/dashboard" className="hover:bg-blue-800 px-3 py-2 rounded-md">
+              <Link href="/" className="hover:bg-blue-800 px-3 py-2 rounded-md">
                 Inicio
               </Link>
               <Link href="/dashboard/mis-motos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-                Mis Motos
+              Mis Motos
               </Link>
               <Link href="/dashboard/favoritos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-                Favoritos
+              Favoritos
               </Link>
               <Link href="/dashboard/publicar" className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
                 + Publicar Moto
@@ -136,7 +136,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link href="/dashboard" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
+            <Link href="/" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
               Inicio
             </Link>
             <Link href="/dashboard/mis-motos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">

@@ -107,10 +107,10 @@ export default function MotoDetallePage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Error al cargar la moto</h1>
           <p className="text-gray-600 mb-4">{error}</p>
           <Link
-            href="/dashboard"
+            href="/"
             className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors"
           >
-            Volver al Dashboard
+            Volver al Inicio
           </Link>
         </div>
       </div>
@@ -130,10 +130,10 @@ export default function MotoDetallePage() {
         {/* Header */}
         <div className="mb-6">
           <Link
-            href="/dashboard"
+            href="/"
             className="text-blue-700 hover:text-blue-900 flex items-center mb-4"
           >
-            ← Volver al Dashboard
+            ← Volver al Inicio
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">{moto.titulo}</h1>
           <p className="text-gray-600">{moto.ciudad}, {moto.departamento}</p>
