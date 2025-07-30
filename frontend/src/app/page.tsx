@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import MotoCard from '@/components/MotoCard';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
-
+import { useRouter } from 'next/navigation';
 interface Moto {
   id: string;
   titulo: string;
@@ -44,6 +44,7 @@ export default function HomePage() {
   const [motos, setMotos] = useState<Moto[]>([]);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({});
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMarca, setSelectedMarca] = useState('');
@@ -111,7 +112,14 @@ export default function HomePage() {
     handleFilterChange({ marca });
   };
 
+
   const toggleFavorito = async (motoId: string) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión para agregar a favoritos');
+      router.push('/auth/login');
+      return;
+    }
     try {
       await api.post(`/motos/${motoId}/favorito`);
       setMotos((prev) =>

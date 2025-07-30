@@ -536,6 +536,7 @@ export const getMotoById = async (req: Request, res: Response): Promise<void> =>
             id: true,
             nombre: true,
             apellido: true,
+            telefono : true,
             calificacion: true,
             totalVentas: true,
             ciudad: true,

@@ -64,7 +64,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center">
-            {user && (
+            {user ? (
               <div className="flex items-center">
                 <div className="mr-4 text-right hidden md:block">
                   <p className="text-sm font-semibold">{user.nombre} {user.apellido}</p>
@@ -115,6 +115,15 @@ export default function Navbar() {
                   )}
                 </div>
               </div>
+            ) : (
+              <div className="hidden md:flex space-x-4">
+                <Link href="/auth/login" className="hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Iniciar Sesión
+                </Link>
+                <Link href="/auth/register" className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-md">
+                  Registrarse
+                </Link>
+              </div>
             )}
           </div>
 
@@ -139,15 +148,28 @@ export default function Navbar() {
             <Link href="/" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
               Inicio
             </Link>
-            <Link href="/dashboard/mis-motos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
-              Mis Motos
-            </Link>
-            <Link href="/dashboard/favoritos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
-              Favoritos
-            </Link>
-            <Link href="/dashboard/publicar" className="block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
-              + Publicar Moto
-            </Link>
+            {user ? (
+              <>
+                <Link href="/dashboard/mis-motos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Mis Motos
+                </Link>
+                <Link href="/dashboard/favoritos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Favoritos
+                </Link>
+                <Link href="/dashboard/publicar" className="block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
+                  + Publicar Moto
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
+                  Iniciar Sesión
+                </Link>
+                <Link href="/auth/register" className="block bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-md">
+                  Registrarse
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

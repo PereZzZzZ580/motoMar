@@ -30,6 +30,7 @@ interface Moto {
     id: string;
     nombre: string;
     apellido: string;
+    telefono?: string;
     calificacion: number;
     totalVentas: number;
     ciudad: string;
@@ -56,6 +57,55 @@ export default function MotoDetallePage() {
   const [error, setError] = useState<string | null>(null);
   const placeholder = 'https://images.unsplash.com/photo-…'; // Ruta al placeholder de imagen
   const motoId = params.id as string;
+
+   const contactarWhatsApp = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+      return;
+    }
+    if (moto?.vendedor?.telefono) {
+      window.open(`https://wa.me/${moto.vendedor.telefono}`, '_blank');
+    } else {
+      toast.error('El vendedor no ha registrado número de contacto');
+    }
+  };
+
+  const toggleFavorito = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+      return;
+    }
+    if (!moto) return;
+    try {
+      await api.post(`/motos/${moto.id}/favorito`);
+      setMoto({
+        ...moto,
+        esFavorito: !moto.esFavorito,
+        _count: {
+          ...moto._count,
+          favoritos: !moto.esFavorito
+            ? (moto._count?.favoritos || 0) + 1
+            : (moto._count?.favoritos || 0) - 1,
+        },
+      });
+      toast.success(!moto.esFavorito ? '¡Agregado a favoritos!' : 'Eliminado de favoritos');
+    } catch (err) {
+      console.error('Error al actualizar favorito:', err);
+      toast.error('Error al actualizar favorito');
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+    }
+  }, []);
 
   useEffect(() => {
     if (motoId) {
@@ -235,10 +285,16 @@ export default function MotoDetallePage() {
 
             {/* Botones de acción */}
             <div className="space-y-3">
-              <button className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+              <button
+                onClick={contactarWhatsApp}
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              >
                 💬 Contactar por WhatsApp
               </button>
-              <button className="w-full bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-800 transition-colors">
+                <button
+                onClick={toggleFavorito}
+                className="w-full bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+              >
                 ❤️ Agregar a Favoritos
               </button>
             </div>
