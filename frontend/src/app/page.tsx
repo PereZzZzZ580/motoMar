@@ -23,7 +23,7 @@ interface Moto {
   vendedor: {
     nombre: string;
     apellido: string;
-    calificacion_promedio: number;
+    calificacion: number;
   };
   _count?: {
     favoritos: number;

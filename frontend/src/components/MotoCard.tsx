@@ -23,7 +23,7 @@ interface Moto {
   vendedor?: {
     nombre: string;
     apellido: string;
-    calificacion_promedio: number;
+    calificacion: number;
   };
   _count?: {
     favoritos: number;
@@ -157,7 +157,7 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
               {moto.vendedor?.nombre || 'Usuario'} {moto.vendedor?.apellido || ''}
             </span>
             <span className="ml-2 text-yellow-500">
-              ⭐ {moto.vendedor?.calificacion_promedio?.toFixed(1) || '0.0'}
+              ⭐ {moto.vendedor?.calificacion?.toFixed(1) || '0.0'}
             </span>
           </div>
           

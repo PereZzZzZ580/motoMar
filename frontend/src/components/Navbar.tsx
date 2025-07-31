@@ -80,7 +80,7 @@ export default function Navbar() {
               <div className="flex items-center">
                 <div className="mr-4 text-right hidden md:block">
                   <p className="text-sm font-semibold">{user.nombre} {user.apellido}</p>
-                  <p className="text-xs">⭐ {user.calificacion_promedio.toFixed(1)}/5.0</p>
+                  <p className="text-xs">⭐ {user.calificacion.toFixed(1)}/5.0</p>
                 </div>
                 
                 <div className="relative">
