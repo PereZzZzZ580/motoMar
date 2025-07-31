@@ -4,18 +4,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import api from '@/lib/api';
-
-interface User {
-  id: string;
-  nombre: string;
-  apellido: string;
-  email: string;
-  calificacion_promedio: number;
-}
+import api, { authAPI, auth, type User } from '@/lib/api';
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(auth.getUser());
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -31,14 +23,16 @@ export default function Navbar() {
     }
     try {
       const response = await api.get('/auth/me');
-      setUser(response.data.usuario);
+      setUser(response.data.user);
     } catch (error) {
       console.error('Error obteniendo perfil:', error);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    await authAPI.logout();
+    auth.clearAuth();
+    setUser(null);
     router.push('/');
   };
 
@@ -56,19 +50,28 @@ export default function Navbar() {
               <Link href="/" className="hover:bg-blue-800 px-3 py-2 rounded-md">
                 Inicio
               </Link>
-              { user && (
-                  <>
+              {user && (
+                <>
                   <Link href="/dashboard/mis-motos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-                  Mis Motos
+                   Mis Motos
                   </Link>
                   <Link href="/dashboard/favoritos" className="hover:bg-blue-800 px-3 py-2 rounded-md">
-                  Favoritos
+                   Favoritos
                   </Link>
-                  <Link href="/dashboard/publicar" className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
-                    + Publicar Moto
-                  </Link>
-                  </>
-              )}  
+                    </>
+              )}
+              <Link
+                href={user ? '/dashboard/publicar' : '/auth/login'}
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    router.push('/auth/login');
+                  }
+                }}
+                className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold"
+              >
+                + Publicar Moto
+              </Link>
             </div>
           </div>
 
@@ -123,6 +126,13 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
+                 <button
+                  onClick={handleLogout}
+                  type="button"
+                  className="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md hidden md:inline-block" 
+                  >
+                  Cerrar Sesión
+                </button>
               </div>
             ) : (
               <div className="hidden md:flex space-x-4">
@@ -165,9 +175,13 @@ export default function Navbar() {
                 <Link href="/dashboard/favoritos" className="block hover:bg-blue-800 px-3 py-2 rounded-md">
                   Favoritos
                 </Link>
-                <Link href="/dashboard/publicar" className="block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold">
-                  + Publicar Moto
-                </Link>
+                  <button
+                    onClick={handleLogout}
+                    type="button"
+                    className="block w-full text-left px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
+                  >
+                    Cerrar Sesión
+                  </button>
               </>
             ) : (
               <>
@@ -179,6 +193,18 @@ export default function Navbar() {
                 </Link>
               </>
             )}
+            <Link
+              href={user ? '/dashboard/publicar' : '/auth/login'}
+              onClick={(e) => {
+                if (!user) {
+                  e.preventDefault();
+                  router.push('/auth/login');
+                }
+              }}
+              className="block bg-green-500 hover:bg-green-600 px-4 py-2 rounded-md font-semibold"
+            >
+              + Publicar Moto
+            </Link>
           </div>
         </div>
       )}

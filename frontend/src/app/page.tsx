@@ -45,12 +45,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({});
   const router = useRouter();
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/auth/login');
-    }
-  }, [router]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedMarca, setSelectedMarca] = useState('');
