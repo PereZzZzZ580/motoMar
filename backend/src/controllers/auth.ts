@@ -148,6 +148,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         departamento: newUser.departamento,
         emailVerificado: newUser.emailVerificado,
         calificacion: newUser.calificacion,
+        politicaAceptada: newUser.politicaAceptada,
         politicaAceptadaAt: newUser.politicaAceptadaAt,
         createdAt: newUser.createdAt
       },

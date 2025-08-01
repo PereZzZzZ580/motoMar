@@ -47,6 +47,8 @@ export interface User {
   departamento?: string;
   emailVerificado: boolean;
   calificacion: number;
+  politicaAceptada: boolean;
+  politicaAceptadaAt?: string;
   createdAt: string;
 }
 
