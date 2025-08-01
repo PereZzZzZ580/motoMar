@@ -29,6 +29,7 @@ interface FormData {
   whatsapp: string;
   acepta_permutas: boolean;
   precio_negociable: boolean;
+  acepta_politica: boolean;
 }
 
 const marcasPopulares = [
@@ -67,7 +68,8 @@ export default function PublicarMotoPage() {
     direccion_aproximada: '',
     whatsapp: '',
     acepta_permutas: false,
-    precio_negociable: true
+    precio_negociable: true,
+    acepta_politica: false, 
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -122,14 +124,20 @@ export default function PublicarMotoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+     if (!formData.acepta_politica) {
+      toast.error('Debes aceptar la política de tratamiento de datos');
+      return;
+    }
     if (images.length === 0) {
       toast.error('Debes subir al menos una imagen');
       return;
     }
 
     // 1) Crear la moto sin imágenes
+    const { acepta_politica, ...rest } = formData;
+
     const motoData = {
-      ...formData,
+      ...rest,
       precio: parseFloat(formData.precio),
       año: parseInt(formData.año),
       cilindraje: parseInt(formData.cilindraje),
@@ -559,6 +567,23 @@ export default function PublicarMotoPage() {
               />
               <span className="ml-2 text-sm text-gray-700">
                 Precio negociable
+              </span>
+            </label>
+
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="acepta_politica"
+                checked={formData.acepta_politica}
+                onChange={handleInputChange}
+                className="rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+                required
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                He leído y acepto la{' '}
+                <a href="/politica-tratamiento-datos.html" className="text-blue-700 hover:text-blue-800">
+                  Política de Tratamiento de Datos
+                </a>
               </span>
             </label>
           </div>

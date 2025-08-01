@@ -28,6 +28,8 @@ model Usuario {
   totalCompras                Int             @default(0)
   activo                      Boolean         @default(true)
   ultimoAcceso                DateTime?
+  politicaAceptadaAt          DateTime?
+  politicaAceptada            Boolean         @default(false)
   createdAt                   DateTime        @default(now())
   updatedAt                   DateTime        @updatedAt
   calificacionesRecibidas     Calificacion[]  @relation("CalificadoUsuario")

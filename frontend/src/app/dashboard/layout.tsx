@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import toast, { Toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
@@ -22,6 +23,7 @@ export default function DashboardLayout({
     try {
       const token = localStorage.getItem('token');
       if (!token) {
+        toast.error('Debes iniciar sesión');
         router.push('/auth/login');
         return;
       }
@@ -32,6 +34,7 @@ export default function DashboardLayout({
     } catch (error) {
       console.error('Error de autenticación:', error);
       localStorage.removeItem('token');
+      toast.error('Debes iniciar sesión');
       router.push('/auth/login');
     }
   };

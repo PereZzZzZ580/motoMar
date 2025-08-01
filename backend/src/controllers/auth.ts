@@ -14,8 +14,9 @@ interface RegisterRequest {
   nombre: string;
   apellido: string;
   telefono?: string;
-  ciudad?: string;
+   ciudad?: string;
   departamento?: string;
+  aceptaPolitica?: boolean; 
 }
 
 interface LoginRequest {
@@ -35,7 +36,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       apellido,
       telefono,
       ciudad,
-      departamento
+      departamento,
+      aceptaPolitica
     }: RegisterRequest = req.body;
 
     // Validación básica
@@ -48,6 +50,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    if (!aceptaPolitica) {
+      res.status(400).json({
+        error: 'Política de tratamiento de datos no aceptada',
+        message: 'Debes aceptar la política de tratamiento de datos para registrarte',
+      });
+      return;
+    }
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -104,6 +113,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         ciudad: ciudad?.trim(),
         departamento: departamento?.trim(),
         emailVerificado: false, // En producción enviar email de verificación
+        politicaAceptada: true,
+        politicaAceptadaAt: new Date(), // Guardar fecha de aceptación
         activo: true
       }
     });
@@ -137,6 +148,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         departamento: newUser.departamento,
         emailVerificado: newUser.emailVerificado,
         calificacion: newUser.calificacion,
+        politicaAceptadaAt: newUser.politicaAceptadaAt,
         createdAt: newUser.createdAt
       },
       auth: tokenResponse,

@@ -14,6 +14,7 @@ Deploy: Vercel + Railway
 ✅ Sistema de reputación y calificaciones
 ✅ Pagos seguros con escrow
 ✅ Inicio de sesión con Google
+Para más detalles sobre qué datos recolectamos y cómo los tratamos, consulta [docs/legal/recoleccion_datos.md](docs/legal/recoleccion_datos.md) y nuestra [política de tratamiento de datos](docs/legal/politica_datos.md).
 🏍️ Gestión de Motos
 ✅ Publicación con fotos múltiples
 ✅ Búsqueda avanzada con filtros
@@ -88,7 +89,9 @@ npm run dev              # Ejecutar frontend + backend
 npm run dev:frontend     # Solo frontend (puerto 3000)
 npm run dev:backend      # Solo backend (puerto 3001)
 npm run build           # Build para producción
+npm run lint            # Linter del frontend (Next.js)
 npm run test            # Ejecutar tests
+# Próximamente: script de lint para el backend
 🌐 Deploy
 Frontend (Vercel)
 URL Producción: https://motomar.vercel.app

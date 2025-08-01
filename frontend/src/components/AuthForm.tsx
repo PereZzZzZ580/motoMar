@@ -14,6 +14,7 @@ export default function AuthForm({ type }: AuthFormProps) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [registroExitoso, setRegistroExitoso] = useState(false);
+  const [aceptaPolitica, setAceptaPolitica] = useState(false);
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -69,7 +70,8 @@ export default function AuthForm({ type }: AuthFormProps) {
           apellido: formData.apellido,
           telefono: formData.telefono || undefined,
           ciudad: formData.ciudad || undefined,
-          departamento: formData.departamento || undefined
+          departamento: formData.departamento || undefined,
+          aceptaPolitica: aceptaPolitica
         });
 
         // Guardar token y usuario
@@ -309,6 +311,25 @@ export default function AuthForm({ type }: AuthFormProps) {
               </div>
             )}
 
+            {/* Aceptar política de datos (solo registro) */}
+            {!isLogin && (
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  required
+                  checked={aceptaPolitica}
+                  onChange={(e) => setAceptaPolitica(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  He leído y acepto la{' '}
+                  <a href="/politica-tratamiento-datos.html" className="text-blue-700 hover:text-blue-800">
+                    Política de Tratamiento de Datos
+                  </a>
+                </span>
+              </label>
+            )}
+            
             {/* Botón submit */}
             <button
               type="submit"
