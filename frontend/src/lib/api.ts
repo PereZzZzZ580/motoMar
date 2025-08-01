@@ -101,6 +101,7 @@ export const authAPI = {
     telefono?: string;
     ciudad?: string;
     departamento?: string;
+    aceptaPolitica: boolean; 
   }): Promise<AuthResponse> => {
     const response = await api.post('/auth/register', userData);
     return response.data;

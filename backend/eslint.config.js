@@ -3,7 +3,7 @@ module.exports = [
     files: ['**/*.{js,ts}'],
     ignores: ['node_modules/**'],
     languageOptions: {
-      parser: '@typescript-eslint/parser',
+      parser: require('@typescript-eslint/parser'),
       parserOptions: {
         ecmaVersion: 12,
         sourceType: 'module'

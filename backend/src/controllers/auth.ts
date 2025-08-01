@@ -113,7 +113,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         ciudad: ciudad?.trim(),
         departamento: departamento?.trim(),
         emailVerificado: false, // En producción enviar email de verificación
-        politicaAceptada: true,
+        politicaAceptada: aceptaPolitica,
         politicaAceptadaAt: new Date(), // Guardar fecha de aceptación
         activo: true
       }
