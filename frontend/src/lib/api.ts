@@ -225,32 +225,38 @@ export const motosAPI = {
 };
 
 // Funciones de utilidad
+const hayLocalStorage = typeof window !== 'undefined';
+
 export const auth = {
   // Guardar token y usuario
   setAuth: (token: string, user: User) => {
+    if (!hayLocalStorage) return;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
   },
 
   // Obtener token
   getToken: (): string | null => {
-    return localStorage.getItem('token');
+    return hayLocalStorage ? localStorage.getItem('token'): null;
   },
 
   // Obtener usuario
   getUser: (): User | null => {
+    if (!hayLocalStorage) return null;
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   },
 
   // Verificar si está logueado
   isAuthenticated: (): boolean => {
+    if (!hayLocalStorage) return false;
     const token = localStorage.getItem('token');
     return !!token;
   },
 
   // Limpiar autenticación
   clearAuth: () => {
+    if (!hayLocalStorage) return;
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   },

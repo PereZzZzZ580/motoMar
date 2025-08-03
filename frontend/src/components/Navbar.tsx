@@ -7,11 +7,15 @@ import { useRouter } from 'next/navigation';
 import api, { authAPI, auth, type User } from '@/lib/api';
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(auth.getUser());
+  const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    const usuarioLocal = auth.getUser();
+    if( usuarioLocal) {
+      setUser(usuarioLocal);
+    }
     fetchUserProfile();
   }, []);
 
