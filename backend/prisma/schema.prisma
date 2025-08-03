@@ -23,6 +23,8 @@ model Usuario {
   ciudad                      String?
   departamento                String?
   direccion                   String?
+  bio                         String?
+  rol                         String          @default("usuario")
   calificacion                Float           @default(0.0)
   totalVentas                 Int             @default(0)
   totalCompras                Int             @default(0)

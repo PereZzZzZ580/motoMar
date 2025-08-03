@@ -1,6 +1,6 @@
  // src/routes/auth.ts
 import { Router } from 'express';
-import { register, login, getProfile, logout, validateToken } from '../controllers/auth';
+import { register, login, getProfile, logout, validateToken, changePassword } from '../controllers/auth';
 import { authenticateToken } from '../middleware/auth';
 import { googleAuthRedirect, googleAuthCallback } from '../controllers/googleAuths';
 
@@ -59,6 +59,12 @@ router.post('/logout', authenticateToken, logout);
  */
 router.get('/validate', authenticateToken, validateToken);
 
+/**
+ * POST /api/auth/change-password
+ * Cambiar contraseña (estando logueado)
+ */
+router.post('/change-password', authenticateToken, changePassword);
+
 // =================================
 // RUTAS FUTURAS (PRÓXIMAMENTE)
 // =================================
@@ -107,16 +113,6 @@ router.post('/resend-verification', authenticateToken, (req, res) => {
   });
 });
 
-/**
- * POST /api/auth/change-password
- * Cambiar contraseña (estando logueado)
- */
-router.post('/change-password', authenticateToken, (req, res) => {
-  res.status(501).json({
-    message: 'Funcionalidad próximamente',
-    feature: 'Cambio de contraseña'
-  });
-});
 
 /**
  * DELETE /api/auth/account
@@ -155,7 +151,7 @@ router.get('/', (req, res) => {
         'GET /validate': 'Validar token actual',
         'POST /verify-email': 'Verificar email (próximamente)',
         'POST /resend-verification': 'Reenviar verificación (próximamente)',
-        'POST /change-password': 'Cambiar contraseña (próximamente)',
+        'POST /change-password': 'Cambiar contraseña )',
         'DELETE /account': 'Eliminar cuenta (próximamente)'
       }
     },

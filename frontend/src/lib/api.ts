@@ -46,6 +46,9 @@ export interface User {
   ciudad?: string;
   departamento?: string;
   emailVerificado: boolean;
+  avatar?: string;
+  bio?: string;
+  rol: string;
   calificacion: number;
   politicaAceptada: boolean;
   politicaAceptadaAt?: string;

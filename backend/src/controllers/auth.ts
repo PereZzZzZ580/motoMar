@@ -339,6 +339,8 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
         ciudad: user.ciudad,
         departamento: user.departamento,
         direccion: user.direccion,
+        bio: user.bio,
+        rol: user.rol,
         emailVerificado: user.emailVerificado,
         telefonoVerificado: user.telefonoVerificado,
         cedulaVerificada: user.cedulaVerificada,
@@ -355,6 +357,81 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({
       error: 'Error interno del servidor',
       message: 'Ocurrió un error al obtener el perfil'
+    });
+  }
+};
+
+// =================================
+// CAMBIAR CONTRASEÑA
+// =================================
+export const changePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({
+        error: 'No autenticado',
+        message: 'Debes iniciar sesión'
+      });
+      return;
+    }
+
+    const { passwordActual, passwordNueva }: { passwordActual: string; passwordNueva: string } = req.body;
+
+    if (!passwordActual || !passwordNueva) {
+      res.status(400).json({
+        error: 'Campos requeridos',
+        message: 'Contraseña actual y nueva son obligatorias'
+      });
+      return;
+    }
+
+    const user = await prisma.usuario.findUnique({
+      where: { id: req.userId }
+    });
+
+    if (!user) {
+      res.status(404).json({
+        error: 'Usuario no encontrado',
+        message: 'El usuario no existe'
+      });
+      return;
+    }
+
+    const isCurrentValid = await comparePassword(passwordActual, user.password);
+    if (!isCurrentValid) {
+      res.status(401).json({
+        error: 'Contraseña incorrecta',
+        message: 'La contraseña actual es incorrecta'
+      });
+      return;
+    }
+
+    const passwordValidation = validatePasswordStrength(passwordNueva);
+    if (!passwordValidation.isValid) {
+      res.status(400).json({
+        error: 'Contraseña débil',
+        message: 'La nueva contraseña no cumple los requisitos de seguridad',
+        errors: passwordValidation.errors,
+        score: passwordValidation.score
+      });
+      return;
+    }
+
+    const hashed = await hashPassword(passwordNueva);
+
+    await prisma.usuario.update({
+      where: { id: user.id },
+      data: { password: hashed }
+    });
+
+    res.json({
+      message: 'Contraseña actualizada correctamente'
+    });
+
+  } catch (error) {
+    console.error('❌ Error cambiando contraseña:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
+      message: 'Ocurrió un error al cambiar la contraseña'
     });
   }
 };

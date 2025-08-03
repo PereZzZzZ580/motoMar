@@ -88,9 +88,17 @@ export default function Navbar() {
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-blue-700 focus:ring-white"
                   >
-                    <div className="h-8 w-8 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold">
-                      {user.nombre.charAt(0)}
-                    </div>
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt="Avatar"
+                        className="h-8 w-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-white text-blue-700 flex items-center justify-center font-bold">
+                        {user.nombre.charAt(0)}
+                      </div>
+                    )}
                   </button>
 
                   {menuOpen && (
