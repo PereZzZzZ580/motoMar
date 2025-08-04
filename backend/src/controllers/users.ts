@@ -4,7 +4,7 @@ import prisma from "../config/database";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
 
 // Cambia la contraseña del usuario autenticado
-enxport async function changePassword(req: Request, res: Response) {
+export async function changePassword(req: Request, res: Response) {
   try {
     const { currentPassword, newPassword } = req.body;
     // Obtener usuario desde la base de datos
@@ -28,7 +28,7 @@ enxport async function changePassword(req: Request, res: Response) {
 }
 
 // Activa o desactiva la autenticación de dos factores
-enxport async function toggle2FA(req: Request, res: Response) {
+export async function toggle2FA(req: Request, res: Response) {
   try {
     const { enable } = req.body as { enable: boolean };
     const user = await prisma.usuario.update({
@@ -43,7 +43,7 @@ enxport async function toggle2FA(req: Request, res: Response) {
 }
 
 // Actualiza preferencias de privacidad del usuario
-enxport async function updatePrivacy(req: Request, res: Response) {
+export async function updatePrivacy(req: Request, res: Response) {
   try {
     const { publicProfile, emailNotifications } = req.body as {
       publicProfile: boolean;
@@ -61,13 +61,18 @@ enxport async function updatePrivacy(req: Request, res: Response) {
 }
 
 // Obtiene las sesiones activas del usuario (requiere modelo Session en Prisma)
-enxport async function getSessions(req: Request, res: Response) {
+export async function getSessions(req: Request, res: Response) {
   try {
-    const sessions = await prisma.session.findMany({
-      where: { userId: req.userId },
-      select: { id: true, device: true, lastActive: true },
-      orderBy: { lastActive: 'desc' },
+    const sesiones = await prisma.sesionUsuario.findMany({
+      where: { usuarioId: req.userId },
+      select: { id: true, userAgent: true, createdAt: true },
+      orderBy: { createdAt: 'desc' },
     });
+    const sessions = sesiones.map((s) => ({
+      id: s.id,
+      device: s.userAgent,
+      lastActive: s.createdAt,
+    }));
     return res.json(sessions);
   } catch (error) {
     console.error(error);
@@ -76,10 +81,10 @@ enxport async function getSessions(req: Request, res: Response) {
 }
 
 // Revoca (elimina) una sesión activa
-enxport async function revokeSession(req: Request, res: Response) {
+export async function revokeSession(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    await prisma.session.delete({ where: { id } });
+    await prisma.sesionUsuario.delete({ where: { id } });
     return res.json({ message: "Sesión revocada exitosamente" });
   } catch (error) {
     console.error(error);
@@ -88,7 +93,7 @@ enxport async function revokeSession(req: Request, res: Response) {
 }
 
 // Exporta datos del usuario y sus motos asociadas
-enxport async function exportData(req: Request, res: Response) {
+export async function exportData(req: Request, res: Response) {
   try {
     // Obtener datos básicos del usuario
     const user = await prisma.usuario.findUnique({
@@ -98,7 +103,7 @@ enxport async function exportData(req: Request, res: Response) {
 
     // Obtener motos con imágenes
     const motos = await prisma.moto.findMany({
-      where: { usuarioId: req.userId },
+      where: { vendedorId: req.userId },
       include: { imagenes: true }
     });
 
@@ -110,7 +115,7 @@ enxport async function exportData(req: Request, res: Response) {
 }
 
 // Elimina la cuenta del usuario y sus datos asociados
-enxport async function deleteAccount(req: Request, res: Response) {
+export async function deleteAccount(req: Request, res: Response) {
   try {
     await prisma.usuario.delete({ where: { id: req.userId } });
     return res.json({ message: "Cuenta eliminada" });

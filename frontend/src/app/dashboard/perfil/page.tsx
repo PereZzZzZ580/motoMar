@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 import { toast } from "react-hot-toast";
 import {
@@ -17,12 +17,31 @@ import {
 
 const tabs = ["Seguridad", "Privacidad", "Sesiones", "Cuenta"] as const;
 
+interface SessionInfo {
+  id: string;
+  device: string;
+  lastActive: string;
+}
+
+interface FormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  publicProfile: boolean;
+  emailNotifications: boolean;
+}
 export default function PerfilSettings() {
   const [activeTab, setActiveTab] = useState<typeof tabs[number]>("Seguridad");
   const [is2FAEnabled, set2FA] = useState(false);
-  const [sessions, setSessions] = useState<any[]>([]);
-  const { register, handleSubmit, formState } = useForm({
-    defaultValues: { publicProfile: true, emailNotifications: true },
+  const [sessions, setSessions] = useState<SessionInfo[]>([]);
+  const { register, handleSubmit } = useForm<FormValues>({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+      publicProfile: true,
+      emailNotifications: true,
+    },
   });
 
   // Cargar estado inicial de 2FA (opcionalmente pide al backend)

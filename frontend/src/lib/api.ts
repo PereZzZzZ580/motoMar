@@ -1,6 +1,5 @@
- // src/lib/api.ts
+// src/lib/api.ts
 import axios from 'axios';
-import { changePassword } from '../../../backend/src/controllers/auth';
 
 // Configuración base de la API
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -282,9 +281,46 @@ export const getMisMotos = async () => {
   return [];
 };
 
-export type changePassword = { currentPassword: string; newPassword: string };
-export async function changePasswordAPI(data: changePasswordDTO) {
+// —— Funciones de perfil ——
+export type ChangePasswordDTO = { currentPassword: string; newPassword: string };
+export async function changePassword(data: ChangePasswordDTO) {
+  const response = await api.patch('/users/me/password', data);
+  return response.data;
+}
 
+export async function toggle2FA(enable: boolean) {
+  const response = await api.patch('/users/me/2fa', { enable });
+  return response.data;
+}
+
+export type PrivacySettingsDTO = {
+  publicProfile: boolean;
+  emailNotifications: boolean;
+};
+export async function updatePrivacySettings(data: PrivacySettingsDTO) {
+  const response = await api.patch('/users/me/privacy', data);
+  return response.data;
+}
+
+export async function fetchSessions() {
+  const response = await api.get('/users/me/sessions');
+  return response.data;
+}
+
+export async function revokeSession(id: string) {
+  const response = await api.delete(`/users/me/sessions/${id}`);
+  return response.data;
+}
+
+export async function exportData() {
+  const response = await api.post('/users/me/export');
+  return response.data;
+}
+
+export async function deleteAccount() {
+  const response = await api.delete('/users/me');
+  return response.data;
+}
 
 
 export default api;

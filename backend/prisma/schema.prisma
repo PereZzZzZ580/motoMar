@@ -24,6 +24,9 @@ model Usuario {
   departamento                String?
   direccion                   String?
   bio                         String?
+  twoFactorEnabled            Boolean         @default(false)
+  publicProfile               Boolean         @default(true)
+  emailNotifications          Boolean         @default(true)
   rol                         String          @default("usuario")
   calificacion                Float           @default(0.0)
   totalVentas                 Int             @default(0)
