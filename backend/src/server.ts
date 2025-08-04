@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { connectDatabase, seedDatabase } from './config/database';
 import { config } from './config/environment';
+import userRoutes from './routes/users';
 
 // Crear aplicación Express
 const app = express();
@@ -74,6 +75,8 @@ import authRoutes from './routes/auth';
 app.use('/api/auth', authRoutes);
 
 // app.use('/api/users', userRoutes);
+import usersRoutes from './routes/users';
+app.use('/api', usersRoutes);
 
 // app.use('/api/motos', motosRoutes); -- ya importada--
 import motosRoutes from './routes/motos';

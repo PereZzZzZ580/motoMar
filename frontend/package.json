@@ -11,6 +11,7 @@
   "dependencies": {
     "@cloudinary/react": "^1.14.3",
     "@cloudinary/url-gen": "^1.21.0",
+    "@headlessui/react": "^2.2.7",
     "axios": "^1.10.0",
     "motomar": "file:..",
     "next": "15.4.1",

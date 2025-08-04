@@ -1,5 +1,6 @@
  // src/lib/api.ts
 import axios from 'axios';
+import { changePassword } from '../../../backend/src/controllers/auth';
 
 // Configuración base de la API
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -280,6 +281,9 @@ export const getMisMotos = async () => {
   console.warn('⚠️ Backend devolvió formato inesperado:', response.data);
   return [];
 };
+
+export type changePassword = { currentPassword: string; newPassword: string };
+export async function changePasswordAPI(data: changePasswordDTO) {
 
 
 
