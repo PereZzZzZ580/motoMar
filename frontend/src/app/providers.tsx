@@ -3,12 +3,18 @@
  'use client';
 
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
+ useEffect(() => {
+    const modoOscuroGuardado = localStorage.getItem('modoOscuro') === 'true';
+    document.documentElement.classList.toggle('modo-oscuro', modoOscuroGuardado);
+    document.body.classList.toggle('modo-oscuro', modoOscuroGuardado);
+  }, []);
   return (
     <>
       {children}
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
