@@ -60,6 +60,21 @@ export async function updatePrivacy(req: Request, res: Response) {
   }
 }
 
+// Actualiza datos básicos del perfil del usuario
+export async function updateProfile(req: Request, res: Response) {
+  try {
+    const { nombre, apellido, telefono, ciudad, departamento, bio } = req.body;
+    const user = await prisma.usuario.update({
+      where: { id: req.userId },
+      data: { nombre, apellido, telefono, ciudad, departamento, bio },
+    });
+    return res.json({ user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error actualizando perfil" });
+  }
+}
+
 // Obtiene las sesiones activas del usuario (requiere modelo Session en Prisma)
 export async function getSessions(req: Request, res: Response) {
   try {

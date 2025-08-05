@@ -282,6 +282,19 @@ export const getMisMotos = async () => {
 };
 
 // —— Funciones de perfil ——
+export type UpdateProfileDTO = {
+  nombre: string;
+  apellido: string;
+  telefono?: string;
+  ciudad?: string;
+  departamento?: string;
+  bio?: string;
+};
+export async function updateProfile(data: UpdateProfileDTO) {
+  const response = await api.patch('/users/me', data);
+  return response.data;
+}
+
 export type ChangePasswordDTO = { currentPassword: string; newPassword: string };
 export async function changePassword(data: ChangePasswordDTO) {
   const response = await api.patch('/users/me/password', data);

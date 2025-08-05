@@ -2,10 +2,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 import { toast } from "react-hot-toast";
 import {
+  authAPI,
   changePassword,
   toggle2FA,
   updatePrivacySettings,
@@ -13,29 +14,47 @@ import {
   revokeSession,
   deleteAccount,
   exportData,
+  updateProfile,
+  type User,
 } from "@/lib/api";
 
-const tabs = ["Seguridad", "Privacidad", "Sesiones", "Cuenta"] as const;
+const tabs = ["Perfil", "Seguridad", "Privacidad", "Sesiones", "Cuenta"] as const;
 
 interface SessionInfo {
   id: string;
   device: string;
   lastActive: string;
 }
-
 interface FormValues {
+  nombre: string;
+  apellido: string;
+  email: string;
+  username: string;
+  bio: string;
+  profilePicture: File | null; 
   currentPassword: string;
+  telefono: string;
+  ciudad: string;
+  departamento: string;
   newPassword: string;
   confirmPassword: string;
   publicProfile: boolean;
   emailNotifications: boolean;
 }
+
 export default function PerfilSettings() {
-  const [activeTab, setActiveTab] = useState<typeof tabs[number]>("Seguridad");
+  const [activeTab, setActiveTab] = useState<typeof tabs[number]>("Perfil");
   const [is2FAEnabled, set2FA] = useState(false);
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
-  const { register, handleSubmit } = useForm<FormValues>({
+  const [usuario, setUsuario] = useState<User | null>(null);
+  const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
+      nombre: "",
+      apellido: "",
+      telefono: "",
+      ciudad: "",
+      departamento: "",
+      bio: "",
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
@@ -44,11 +63,40 @@ export default function PerfilSettings() {
     },
   });
 
-  // Cargar estado inicial de 2FA (opcionalmente pide al backend)
   useEffect(() => {
-    // Aquí podrías hacer un GET /users/me para saber si 2FA está activo
-    // set2FA(data.is2FAEnabled)
-  }, []);
+    async function cargarPerfil() {
+      const data = await authAPI.getProfile();
+      setUsuario(data);
+      reset({
+        nombre: data.nombre,
+        apellido: data.apellido,
+        telefono: data.telefono || "",
+        ciudad: data.ciudad || "",
+        departamento: data.departamento || "",
+        bio: data.bio || "",
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+        publicProfile: data.publicProfile,
+        emailNotifications: data.emailNotifications,
+      });
+    }
+    cargarPerfil();
+  }, [reset]);
+
+  const onProfileSubmit = handleSubmit(async (data) => {
+    await updateProfile({
+      nombre: data.nombre,
+      apellido: data.apellido,
+      telefono: data.telefono,
+      ciudad: data.ciudad,
+      departamento: data.departamento,
+      bio: data.bio,
+    });
+    toast.success("Perfil actualizado");
+    const actualizado = await authAPI.getProfile();
+    setUsuario(actualizado);
+  });
 
   const onPasswordSubmit = handleSubmit(async (data) => {
     if (data.newPassword !== data.confirmPassword) {
@@ -74,7 +122,28 @@ export default function PerfilSettings() {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow">
-      <h1 className="text-2xl font-semibold mb-4">Configuración</h1>
+      <h1 className="text-2xl font-semibold mb-4">Perfil</h1>
+      {usuario && (
+        <div className="flex items-center space-x-4 mb-6">
+          {usuario.avatar ? (
+            <img
+              src={usuario.avatar}
+              alt="Avatar"
+              className="h-16 w-16 rounded-full"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center text-xl">
+              {usuario.nombre.charAt(0)}
+            </div>
+          )}
+          <div>
+            <p className="text-xl font-semibold">
+              {usuario.nombre} {usuario.apellido}
+            </p>
+            <p className="text-gray-600">{usuario.email}</p>
+          </div>
+        </div>
+      )}
       <Tab.Group
         selectedIndex={tabs.indexOf(activeTab)}
         onChange={(i) => setActiveTab(tabs[i])}
@@ -94,6 +163,62 @@ export default function PerfilSettings() {
           ))}
         </Tab.List>
         <Tab.Panels className="mt-6">
+          {/* —— Perfil —— */}
+          <Tab.Panel>
+            <form onSubmit={onProfileSubmit} className="space-y-4 max-w-md">
+              <div>
+                <label>Nombre</label>
+                <input
+                  type="text"
+                  {...register("nombre", { required: true })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label>Apellido</label>
+                <input
+                  type="text"
+                  {...register("apellido", { required: true })}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label>Teléfono</label>
+                <input
+                  type="text"
+                  {...register("telefono")}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label>Ciudad</label>
+                <input
+                  type="text"
+                  {...register("ciudad")}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label>Departamento</label>
+                <input
+                  type="text"
+                  {...register("departamento")}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div>
+                <label>Bio</label>
+                <textarea
+                  {...register("bio")}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded">
+                Guardar perfil
+              </button>
+            </form>
+          </Tab.Panel>
+
           {/* —— Seguridad —— */}
           <Tab.Panel>
             <form onSubmit={onPasswordSubmit} className="space-y-4 max-w-md">
@@ -148,7 +273,12 @@ export default function PerfilSettings() {
           {/* —— Privacidad —— */}
           <Tab.Panel>
             <form
-              onSubmit={handleSubmit(updatePrivacySettings)}
+            onSubmit={handleSubmit((data) =>
+                updatePrivacySettings({
+                  publicProfile: data.publicProfile,
+                  emailNotifications: data.emailNotifications,
+                })
+              )}
               className="space-y-4 max-w-md"
             >
               <label className="flex items-center">
