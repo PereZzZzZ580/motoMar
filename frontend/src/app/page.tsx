@@ -6,6 +6,8 @@ import MotoCard from '@/components/MotoCard';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import link from 'next/link';
+import Link from 'next/link';
 interface Moto {
   id: string;
   titulo: string;
@@ -160,8 +162,14 @@ export default function HomePage() {
             El marketplace más seguro de Colombia para comprar y vender motocicletas.
             Con verificación automática, pagos seguros y trámites simplificados.
           </p>
-          <form onSubmit={(e) => e.preventDefault()} className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              fetchMotos();
+            }}
+            className="max-w-2xl mx-auto mb-4 flex gap-4"
+          >
+            <div className="relative flex-1">
               <input
                 type="text"
                 placeholder="Buscar motos por marca, modelo o ubicación..."
@@ -176,7 +184,112 @@ export default function HomePage() {
                 🔍 Buscar
               </button>
             </div>
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Filtros
+            </button>
           </form>
+          {showFilters && (
+            <div className="max-w-2xl mx-auto mb-8 text-left">
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                    <select
+                      value={filters.marca || ''}
+                      onChange={(e) => handleFilterChange({ marca: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="">Todas las marcas</option>
+                      <option value="Honda">Honda</option>
+                      <option value="Yamaha">Yamaha</option>
+                      <option value="Suzuki">Suzuki</option>
+                      <option value="Kawasaki">Kawasaki</option>
+                      <option value="Bajaj">Bajaj</option>
+                      <option value="KTM">KTM</option>
+                      <option value="AKT">AKT</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Precio Mínimo</label>
+                    <input
+                      type="number"
+                      value={filters.precioMin || ''}
+                      onChange={(e) => handleFilterChange({ precioMin: parseInt(e.target.value) })}
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Precio Máximo</label>
+                    <input
+                      type="number"
+                      value={filters.precioMax || ''}
+                      onChange={(e) => handleFilterChange({ precioMax: parseInt(e.target.value) })}
+                      placeholder="50000000"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                    <input
+                      type="text"
+                      value={filters.ciudad || ''}
+                      onChange={(e) => handleFilterChange({ ciudad: e.target.value })}
+                      placeholder="Ej: Armenia"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
+                    <select
+                      value={filters.departamento || ''}
+                      onChange={(e) => handleFilterChange({ departamento: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="">Todos los departamentos</option>
+                      <option value="Antioquia">Antioquia</option>
+                      <option value="Bogotá D.C.">Bogotá D.C.</option>
+                      <option value="Valle del Cauca">Valle del Cauca</option>
+                      <option value="Quindío">Quindío</option>
+                      <option value="Cundinamarca">Cundinamarca</option>
+                      <option value="Atlántico">Atlántico</option>
+                      <option value="Santander">Santander</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                    <select
+                      value={filters.ordenPor || ''}
+                      onChange={(e) => handleFilterChange({ ordenPor: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="">Más recientes</option>
+                      <option value="precio_asc">Precio: Menor a Mayor</option>
+                      <option value="precio_desc">Precio: Mayor a Menor</option>
+                      <option value="kilometraje_asc">Menor kilometraje</option>
+                      <option value="año_desc">Año más reciente</option>
+                    </select>
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                      Limpiar filtros
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-4 text-sm text-gray-500 text-center">
+                  {motos.length} motos encontradas
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex justify-center space-x-4 mb-12">
             {['Honda', 'Yamaha', 'Suzuki', 'Kawasaki', 'Bajaj'].map((marca) => (
               <button
@@ -248,126 +361,6 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <form className="flex gap-4 mb-4" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por marca, modelo, ciudad..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-            />
-            <button
-              type="button"
-              onClick={fetchMotos}
-              className="px-6 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
-            >
-              Buscar
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Filtros
-            </button>
-          </form>
-          {showFilters && (
-            <div className="border-t pt-4 mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Marca</label>
-                  <select
-                    value={filters.marca || ''}
-                    onChange={(e) => handleFilterChange({ marca: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  >
-                    <option value="">Todas las marcas</option>
-                    <option value="Honda">Honda</option>
-                    <option value="Yamaha">Yamaha</option>
-                    <option value="Suzuki">Suzuki</option>
-                    <option value="Kawasaki">Kawasaki</option>
-                    <option value="Bajaj">Bajaj</option>
-                    <option value="KTM">KTM</option>
-                    <option value="AKT">AKT</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Precio Mínimo</label>
-                  <input
-                    type="number"
-                    value={filters.precioMin || ''}
-                    onChange={(e) => handleFilterChange({ precioMin: parseInt(e.target.value) })}
-                    placeholder="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Precio Máximo</label>
-                  <input
-                    type="number"
-                    value={filters.precioMax || ''}
-                    onChange={(e) => handleFilterChange({ precioMax: parseInt(e.target.value) })}
-                    placeholder="50000000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
-                  <input
-                    type="text"
-                    value={filters.ciudad || ''}
-                    onChange={(e) => handleFilterChange({ ciudad: e.target.value })}
-                    placeholder="Ej: Armenia"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Departamento</label>
-                  <select
-                    value={filters.departamento || ''}
-                    onChange={(e) => handleFilterChange({ departamento: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  >
-                    <option value="">Todos los departamentos</option>
-                    <option value="Antioquia">Antioquia</option>
-                    <option value="Bogotá D.C.">Bogotá D.C.</option>
-                    <option value="Valle del Cauca">Valle del Cauca</option>
-                    <option value="Quindío">Quindío</option>
-                    <option value="Cundinamarca">Cundinamarca</option>
-                    <option value="Atlántico">Atlántico</option>
-                    <option value="Santander">Santander</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
-                  <select
-                    value={filters.ordenPor || ''}
-                    onChange={(e) => handleFilterChange({ ordenPor: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  >
-                    <option value="">Más recientes</option>
-                    <option value="precio_asc">Precio: Menor a Mayor</option>
-                    <option value="precio_desc">Precio: Mayor a Menor</option>
-                    <option value="kilometraje_asc">Menor kilometraje</option>
-                    <option value="año_desc">Año más reciente</option>
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                  >
-                    Limpiar filtros
-                  </button>
-                </div>
-              </div>
-              <div className="mt-4 text-sm text-gray-500 text-center">{motos.length} motos encontradas</div>
-            </div>
-          )}
         </div>
 
         {loading ? (
@@ -447,27 +440,80 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4">Marketplace</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Explorar Motos</li>
-                <li>Vender</li>
-                <li>Favoritos</li>
-                <li>Búsqueda Avanzada</li>
+                <li>
+                  <Link href="/" className="hover:underline">
+                    Explorar Motos
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard/publicar" className="hover:underline">
+                    Vender
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard/favoritos" className="hover:underline">
+                    Favoritos
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/busqueda-avanzada" className="hover:underline">
+                    Búsqueda Avanzada
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Ayuda</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Centro de Ayuda</li>
-                <li>Cómo Comprar</li>
-                <li>Cómo Vender</li>
-                <li>Trámites RUNT</li>
+                <li>
+                  <Link href="/ayuda/centro" className="hover:underline">
+                    Centro de Ayuda
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ayuda/como-comprar" className="hover:underline">
+                    Cómo Comprar
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ayuda/como-vender" className="hover:underline">
+                    Cómo Vender
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/ayuda/tramites-runt" className="hover:underline">
+                    Trámites RUNT
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-gray-400">
-                <li>Términos de Uso</li>
-                <li>Política de Privacidad</li>
-                <li>Contacto</li>
+                <li>
+                  <Link
+                    href="/legal/terminos"
+                    className="hover:underline cursor-pointer block"
+                  >
+                    Términos de Uso
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/legal/privacidad"
+                    className="hover:underline cursor-pointer block"
+                  >
+                    Política de Privacidad
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contacto"
+                    className="hover:underline cursor-pointer block"
+                  >
+                    Contacto
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
