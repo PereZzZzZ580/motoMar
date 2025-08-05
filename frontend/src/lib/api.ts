@@ -48,6 +48,8 @@ export interface User {
   emailVerificado: boolean;
   avatar?: string;
   bio?: string;
+  publicProfile: boolean;
+  emailNotifications: boolean;
   rol: string;
   calificacion: number;
   politicaAceptada: boolean;

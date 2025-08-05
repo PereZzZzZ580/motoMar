@@ -32,14 +32,17 @@ interface FormValues {
   username: string;
   bio: string;
   profilePicture: File | null; 
-  currentPassword: string;
   telefono: string;
   ciudad: string;
   departamento: string;
-  newPassword: string;
-  confirmPassword: string;
   publicProfile: boolean;
   emailNotifications: boolean;
+}
+
+interface PasswordFormValues {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export default function PerfilSettings() {
@@ -47,7 +50,8 @@ export default function PerfilSettings() {
   const [is2FAEnabled, set2FA] = useState(false);
   const [sessions, setSessions] = useState<SessionInfo[]>([]);
   const [usuario, setUsuario] = useState<User | null>(null);
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const [errorContrasena, setErrorContrasena] = useState<string | null>(null);
+  const { register, handleSubmit, reset, setValue } = useForm<FormValues>({
     defaultValues: {
       nombre: "",
       apellido: "",
@@ -55,11 +59,20 @@ export default function PerfilSettings() {
       ciudad: "",
       departamento: "",
       bio: "",
+      publicProfile: true,
+      emailNotifications: true,
+    },
+  });
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+  } = useForm<PasswordFormValues>({
+    defaultValues: {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
-      publicProfile: true,
-      emailNotifications: true,
     },
   });
 
@@ -74,15 +87,13 @@ export default function PerfilSettings() {
         ciudad: data.ciudad || "",
         departamento: data.departamento || "",
         bio: data.bio || "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
         publicProfile: data.publicProfile,
         emailNotifications: data.emailNotifications,
       });
+      resetPassword();
     }
     cargarPerfil();
-  }, [reset]);
+  }, [reset, resetPassword]);
 
   const onProfileSubmit = handleSubmit(async (data) => {
     await updateProfile({
@@ -98,15 +109,32 @@ export default function PerfilSettings() {
     setUsuario(actualizado);
   });
 
-  const onPasswordSubmit = handleSubmit(async (data) => {
+    const onPasswordSubmit = handlePasswordSubmit(async (data) => {
     if (data.newPassword !== data.confirmPassword) {
-      return toast.error("Las contraseñas no coinciden");
+      const mensaje = "Las contraseñas no coinciden";
+      toast.error(mensaje);
+      alert(mensaje);
+      setErrorContrasena(mensaje);
+      return;
     }
-    await changePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-    });
-    toast.success("Contraseña actualizada");
+    try {
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+      const mensaje = "Contraseña actualizada";
+      toast.success(mensaje);
+      alert(mensaje);
+      setErrorContrasena(null);
+      resetPassword();
+    } catch (error: unknown) {
+      const mensaje =
+        (error as { response?: { data?: { message?: string } } }).response?.data?.message ||
+        "Contraseña actual incorrecta";
+      toast.error(mensaje);
+      alert(mensaje);
+      setErrorContrasena(mensaje);
+    }
   });
 
   async function loadSessions() {
@@ -226,7 +254,7 @@ export default function PerfilSettings() {
                 <label>Contraseña actual</label>
                 <input
                   type="password"
-                  {...register("currentPassword", { required: true })}
+                  {...registerPassword("currentPassword", { required: true })}
                   className="w-full px-3 py-2 border rounded"
                 />
               </div>
@@ -234,7 +262,7 @@ export default function PerfilSettings() {
                 <label>Nueva contraseña</label>
                 <input
                   type="password"
-                  {...register("newPassword", { minLength: 8 })}
+                  {...registerPassword("newPassword", { minLength: 8 })}
                   className="w-full px-3 py-2 border rounded"
                 />
               </div>
@@ -242,10 +270,13 @@ export default function PerfilSettings() {
                 <label>Confirmar nueva contraseña</label>
                 <input
                   type="password"
-                  {...register("confirmPassword", { minLength: 8 })}
+                  {...registerPassword("confirmPassword", { minLength: 8 })}
                   className="w-full px-3 py-2 border rounded"
                 />
               </div>
+              {errorContrasena && (
+                <p className="text-red-500 text-sm">{errorContrasena}</p>
+              )}
               <button className="px-4 py-2 bg-blue-600 text-white rounded">
                 Guardar contraseña
               </button>
