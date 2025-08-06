@@ -3,6 +3,7 @@
 
 import api from '@/lib/api';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -27,6 +28,8 @@ interface FormData {
   departamento: string;
   direccion_aproximada: string;
   whatsapp: string;
+  coordenadasLat: number | null;
+  coordenadasLng: number | null;
   acepta_permutas: boolean;
   precio_negociable: boolean;
   acepta_politica: boolean;
@@ -67,10 +70,18 @@ export default function PublicarMotoPage() {
     departamento: 'Quindío',
     direccion_aproximada: '',
     whatsapp: '',
+    coordenadasLat: null,
+    coordenadasLng: null,
     acepta_permutas: false,
     precio_negociable: true,
     acepta_politica: false, 
   });
+
+  const SelectorUbicacion = dynamic(() => import('@/components/SelectorUbicacion'), { ssr: false });
+
+  const manejarUbicacion = (lat: number, lng: number) => {
+    setFormData(prev => ({ ...prev, coordenadasLat: lat, coordenadasLng: lng }));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -134,15 +145,21 @@ export default function PublicarMotoPage() {
     }
 
     // 1) Crear la moto sin imágenes
-    const { acepta_politica, ...rest } = formData;
+    const { acepta_politica, coordenadasLat, coordenadasLng, ...rest } = formData;
 
-    const motoData = {
+    const motoData: Record<string, unknown> = {
       ...rest,
       precio: parseFloat(formData.precio),
       año: parseInt(formData.año),
       cilindraje: parseInt(formData.cilindraje),
       kilometraje: parseInt(formData.kilometraje),
     };
+
+
+    if (coordenadasLat !== null && coordenadasLng !== null) {
+      motoData.coordenadasLat = coordenadasLat;
+      motoData.coordenadasLng = coordenadasLng;
+    }
 
     setLoading(true);
     toast.loading('Publicando moto...');
@@ -528,6 +545,22 @@ export default function PublicarMotoPage() {
               />
             </div>
 
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Selecciona la ubicación aproximada
+              </label>
+              <SelectorUbicacion
+                lat={formData.coordenadasLat}
+                lng={formData.coordenadasLng}
+                onChange={manejarUbicacion}
+              />
+              {formData.coordenadasLat && formData.coordenadasLng && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Lat: {formData.coordenadasLat.toFixed(5)}, Lng: {formData.coordenadasLng.toFixed(5)}
+                </p>
+              )}
+            </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 WhatsApp (opcional)

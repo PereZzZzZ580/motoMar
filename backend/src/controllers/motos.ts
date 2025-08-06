@@ -30,6 +30,8 @@ interface CreateMotoRequest {
   departamento: string;
   barrio?: string;
   imagenes?: string[];
+  coordenadasLat?: number;
+  coordenadasLng?: number;
 }
 
 interface SearchFilters {
@@ -84,7 +86,8 @@ const motoSchema = z.object({
   ciudad: z.string().min(2),
   departamento: z.string().min(2),
   barrio: z.string().optional(),
-
+  coordenadasLat: z.number().optional(),
+  coordenadasLng: z.number().optional(),
   imagenes: z.array(z.string().url()).optional(),
 });
 
@@ -126,7 +129,9 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
       ciudad,
       departamento,
       barrio,
-      imagenes = []
+      imagenes = [],
+      coordenadasLat,
+      coordenadasLng
     }: CreateMotoRequest = req.body;
 
     // Validaciones básicas
@@ -200,6 +205,8 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
         ciudad: ciudad.trim(),
         departamento: departamento.trim(),
         barrio: barrio?.trim(),
+        coordenadasLat,
+        coordenadasLng,
         imagenPrincipal: imagenes[0] || null,
         vendedorId: req.userId,
         activa: true,
