@@ -5,7 +5,7 @@ import api from '@/lib/api';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 interface FormData {
@@ -45,6 +45,8 @@ const tiposMotor = ['2 Tiempos', '4 Tiempos', 'Eléctrico'];
 const tiposTransmision = ['MANUAL', 'AUTOMATICA', 'SEMI_AUTOMATICA'];
 const tiposCombustible = ['GASOLINA', 'ELECTRICA', 'HIBRIDA'];
 
+const SelectorUbicacion = dynamic(() => import('@/components/SelectorUbicacion'), { ssr: false });
+
 export default function PublicarMotoPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -77,11 +79,63 @@ export default function PublicarMotoPage() {
     acepta_politica: false, 
   });
 
-  const SelectorUbicacion = dynamic(() => import('@/components/SelectorUbicacion'), { ssr: false });
-
   const manejarUbicacion = (lat: number, lng: number) => {
     setFormData(prev => ({ ...prev, coordenadasLat: lat, coordenadasLng: lng }));
+
+    const obtenerDireccion = async (lat: number, lng: number) => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=es`
+        );
+        const datos = await res.json();
+        const address = datos.address || {};
+        const ciudad = address.city || address.town || address.village || '';
+        const departamento = address.state || '';
+        const direccion =
+          address.road || address.neighbourhood || address.suburb || datos.display_name || '';
+
+        setFormData(prev => ({
+          ...prev,
+          ciudad: ciudad || prev.ciudad,
+          departamento: departamento || prev.departamento,
+          direccion_aproximada: direccion || prev.direccion_aproximada,
+        }));
+      } catch (error) {
+        console.error('Error obteniendo dirección desde coordenadas', error);
+      }
+    };
+
+    void obtenerDireccion(lat, lng);
   };
+  
+
+  useEffect(() => {
+    if (formData.departamento && formData.ciudad) {
+      const consulta = formData.direccion_aproximada
+        ? `${formData.direccion_aproximada}, ${formData.ciudad}, ${formData.departamento}, Colombia`
+        : `${formData.ciudad}, ${formData.departamento}, Colombia`;
+
+      const obtenerCoordenadas = async () => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(consulta)}`
+          );
+          const datos = await res.json();
+          if (datos[0]) {
+            setFormData(prev => ({
+              ...prev,
+              coordenadasLat: parseFloat(datos[0].lat),
+              coordenadasLng: parseFloat(datos[0].lon),
+            }));
+          }
+        } catch (error) {
+          console.error('Error geocodificando ubicación', error);
+        }
+      };
+
+      obtenerCoordenadas();
+    }
+  }, [formData.departamento, formData.ciudad, formData.direccion_aproximada]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -146,6 +200,7 @@ export default function PublicarMotoPage() {
 
     // 1) Crear la moto sin imágenes
     const { acepta_politica, coordenadasLat, coordenadasLng, ...rest } = formData;
+    void acepta_politica;
 
     const motoData: Record<string, unknown> = {
       ...rest,
@@ -157,8 +212,8 @@ export default function PublicarMotoPage() {
 
 
     if (coordenadasLat !== null && coordenadasLng !== null) {
-      motoData.coordenadasLat = coordenadasLat;
-      motoData.coordenadasLng = coordenadasLng;
+      motoData.coordenadasLat = Number(coordenadasLat);
+      motoData.coordenadasLng = Number(coordenadasLng);
     }
 
     setLoading(true);
@@ -187,7 +242,7 @@ export default function PublicarMotoPage() {
         const data = error.response?.data as {error?: string; message?: string};
         msg = data.error || data.message || msg;
       }
-      
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -560,7 +615,7 @@ export default function PublicarMotoPage() {
                 </p>
               )}
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 WhatsApp (opcional)

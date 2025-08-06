@@ -93,6 +93,8 @@ model Moto {
   ciudad          String
   departamento    String
   barrio          String?
+  coordenadasLat  Float?
+  coordenadasLng  Float?
   imagenPrincipal String?
   activa          Boolean         @default(true)
   vendida         Boolean         @default(false)

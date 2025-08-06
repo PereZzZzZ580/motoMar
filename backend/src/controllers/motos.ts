@@ -30,8 +30,8 @@ interface CreateMotoRequest {
   departamento: string;
   barrio?: string;
   imagenes?: string[];
-  coordenadasLat?: number;
-  coordenadasLng?: number;
+  coordenadasLat?: number | string;
+  coordenadasLng?: number | string;
 }
 
 interface SearchFilters {
@@ -134,6 +134,11 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
       coordenadasLng
     }: CreateMotoRequest = req.body;
 
+    const coordenadasLatNum =
+      coordenadasLat !== undefined ? Number(coordenadasLat) : undefined;
+    const coordenadasLngNum =
+      coordenadasLng !== undefined ? Number(coordenadasLng) : undefined;
+
     // Validaciones básicas
     if (!titulo || !descripcion || !precio || !marca || !modelo || !año || !cilindraje || !kilometraje || !color || !ciudad || !departamento) {
       res.status(400).json({
@@ -205,8 +210,12 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
         ciudad: ciudad.trim(),
         departamento: departamento.trim(),
         barrio: barrio?.trim(),
-        coordenadasLat,
-        coordenadasLng,
+        coordenadasLat: Number.isFinite(coordenadasLatNum)
+          ? coordenadasLatNum
+          : undefined,
+        coordenadasLng: Number.isFinite(coordenadasLngNum)
+          ? coordenadasLngNum
+          : undefined,
         imagenPrincipal: imagenes[0] || null,
         vendedorId: req.userId,
         activa: true,

@@ -1,6 +1,7 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -16,6 +17,16 @@ function EventosMapa({ onChange }: { onChange: Props['onChange'] }) {
       onChange(e.latlng.lat, e.latlng.lng);
     },
   });
+  return null;
+}
+
+function CentrarMapa({ lat, lng }: { lat: number | null; lng: number | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (lat && lng) {
+      map.setView({ lat, lng });
+    }
+  }, [lat, lng, map]);
   return null;
 }
 
@@ -36,6 +47,7 @@ export default function SelectorUbicacion({ lat, lng, onChange }: Props) {
       />
       {lat && lng && <Marker position={posicion} icon={icono} />}
       <EventosMapa onChange={onChange} />
+      <CentrarMapa lat={lat} lng={lng} />
     </MapContainer>
   );
 }
