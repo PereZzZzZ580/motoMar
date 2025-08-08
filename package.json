@@ -26,6 +26,7 @@
     "cloudinary": "^1.41.3",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
+    "openai": "^5.12.1",
     "react-hook-form": "^7.62.0"
   }
 }

@@ -1,4 +1,6 @@
 import Navbar from '@/components/Navbar';
+import ChatbotSoporte from '@/components/ChatbotSoporte';
+
 
 export default function CentroAyudaPage() {
   return (
@@ -6,7 +8,8 @@ export default function CentroAyudaPage() {
       <Navbar />
       <main className="max-w-3xl mx-auto p-6 text-gray-700">
         <h1 className="text-3xl font-bold mb-4">Centro de Ayuda</h1>
-        <p>Resuelve tus dudas con nuestras preguntas frecuentes y guías.</p>
+        <p className="mb-4">Resuelve tus dudas con nuestro chatbot de soporte.</p>
+        <ChatbotSoporte />
       </main>
     </div>
   );

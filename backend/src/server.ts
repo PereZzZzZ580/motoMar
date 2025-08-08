@@ -83,6 +83,9 @@ import motosRoutes from './routes/motos';
 app.use('/api/motos', motosRoutes);
 
 // app.use('/api/chat', chatRoutes);
+import chatRoutes from "./routes/chat";
+app.use("/api", chatRoutes);
+
 // app.use('/api/transactions', transactionRoutes);
 
 // app.use('/api/users', (req, res) => {
