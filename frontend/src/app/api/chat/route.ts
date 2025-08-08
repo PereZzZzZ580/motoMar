@@ -1,12 +1,25 @@
 import { NextResponse } from 'next/server';
 
+interface Mensaje {
+    autor: 'usuario' | 'bot';
+    texto: string;
+}
+
 export async function POST(req: Request) {
   try {
-    const { mensaje } = await req.json();
+    const { mensajes }: { mensajes: Mensaje[] } = await req.json();
     const clave = process.env.OPENAI_API_KEY;
     if (!clave) {
       return NextResponse.json({ error: 'Falta la clave de API' }, { status: 500 });
     }
+
+    const mensajesIA = [
+      { role: 'system', content: 'Eres un asistente de soporte para MotoMar.' },
+      ...mensajes.map((m) => ({
+        role: m.autor === 'usuario' ? 'user' : 'assistant',
+        content: m.texto,
+      })),
+    ];
 
     const respuesta = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -16,10 +29,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'Eres un asistente de soporte para MotoMar.' },
-          { role: 'user', content: mensaje },
-        ],
+        messages: mensajesIA,
       }),
     });
 

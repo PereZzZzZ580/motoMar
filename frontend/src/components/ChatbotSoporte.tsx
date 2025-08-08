@@ -15,15 +15,15 @@ export default function ChatbotSoporte() {
   const enviarMensaje = async () => {
     if (!entrada.trim()) return;
     const nuevo: Mensaje = { autor: 'usuario', texto: entrada };
-    setMensajes((m) => [...m, nuevo]);
-    const contenido = entrada;
+    const historial = [...mensajes, nuevo];
+    setMensajes(historial);
     setEntrada('');
     setCargando(true);
     try {
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: contenido }),
+        body: JSON.stringify({ mensaje: historial }),
       });
       if (!resp.ok) {
         const texto = await resp.text();
