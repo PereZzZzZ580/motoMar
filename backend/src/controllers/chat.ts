@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
+import axios from "axios";
 
 interface Mensaje {
-autor: "usuario" | "bot";
-  texto: string; 
+  autor: "usuario" | "bot";
+  texto: string;
 }
 
 export async function chatSupport(req: Request, res: Response) {
-    const { mensajes }: { mensajes: Mensaje[] } = req.body;
+  const { mensajes }: { mensajes: Mensaje[] } = req.body;
   if (!mensajes?.length) {
     return res.status(400).json({ error: "Falta el campo mensajes" });
   }
@@ -25,29 +26,26 @@ export async function chatSupport(req: Request, res: Response) {
   ];
 
   try {
-    const respuesta = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${clave}`,
-      },
-      body: JSON.stringify({
+    const respuestaOpenAI = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
         model: "gpt-4o-mini",
         messages: mensajesIA,
-      }),
-    });
-
-    if (!respuesta.ok) {
-      const textoError = await respuesta.text();
-      console.error("Error de OpenAI:", textoError);
-      return res.status(500).json({ error: "Error al conectar con el modelo" });
-    }
-
-    const datos = await respuesta.json();
-    const contenido = datos.choices?.[0]?.message?.content || "Sin respuesta";
+  },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${clave}`,
+        },
+      }
+    );
+    const contenido =
+      respuestaOpenAI.data.choices?.[0]?.message?.content || "Sin respuesta";
     return res.json({ respuesta: contenido });
-  } catch (error) {
-    console.error("Error en chatSupport:", error);
-    return res.status(500).json({ error: "Error al procesar la solicitud" });
+    } catch (error: any) {
+    console.error("Error en chatSupport:", error.response?.data || error);
+    return res
+      .status(500)
+      .json({ error: "Error al procesar la solicitud" });
   }
 }

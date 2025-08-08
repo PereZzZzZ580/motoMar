@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { chatSupport } from "../controllers/chat";
-import { authenticateToken } from "../middleware/auth";
+import { optionalAuth } from "../middleware/auth";
 
 const router = Router();
-router.post("/chat", authenticateToken, chatSupport);
+router.post("/chat", optionalAuth, chatSupport);
+
 export default router;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import api from '../lib/api';
 
 interface Mensaje {
   autor: 'usuario' | 'bot';
@@ -20,19 +21,10 @@ export default function ChatbotSoporte() {
     setEntrada('');
     setCargando(true);
     try {
-      const resp = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mensaje: historial }),
-      });
-      if (!resp.ok) {
-        const texto = await resp.text();
-        throw new Error(texto);
-      }
-      const datos = await resp.json();
-      setMensajes((m) => [...m, { autor: 'bot', texto: datos.respuesta }]);
+    const resp = await api.post('/chat', { mensajes: historial });
+      setMensajes((m) => [...m, { autor: 'bot', texto: resp.data.respuesta }]);  
     } catch (error) {
-      console.error('Error al consultar /api/chat:', error);
+    console.error('Error al consultar /chat:', error);  
       setMensajes((m) => [...m, { autor: 'bot', texto: 'Error al obtener respuesta' }]);
     } finally {
       setCargando(false);
