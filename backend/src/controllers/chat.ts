@@ -6,6 +6,41 @@ interface Mensaje {
   texto: string;
 }
 
+interface RespuestaOpenAI {
+  choices?: {
+    message?: {
+      content?: string;
+    };
+  }[];
+}
+
+interface RespuestaErrorOpenAI {
+  error?: {
+    message?: string;
+  };
+}
+
+interface ErrorAxios<T = any> {
+  response?: {
+    status?: number;
+    data?: T;
+  };
+  message?: string;
+}
+
+const intervaloRitmoMs = Number(process.env.RITMO_PETICIONES_MS) || 1000;
+let proximaPeticionPermitida = 0;
+
+async function esperarRitmo() {
+  const ahora = Date.now();
+  if (ahora < proximaPeticionPermitida) {
+    await new Promise((resuelve) =>
+      setTimeout(resuelve, proximaPeticionPermitida - ahora)
+    );
+  }
+  proximaPeticionPermitida = Date.now() + intervaloRitmoMs;
+}
+
 export async function chatSupport(req: Request, res: Response) {
   const { mensajes }: { mensajes: Mensaje[] } = req.body;
   if (!mensajes?.length) {
@@ -26,12 +61,13 @@ export async function chatSupport(req: Request, res: Response) {
   ];
 
   try {
-    const respuestaOpenAI = await axios.post(
+    await esperarRitmo();
+    const respuestaOpenAI = await axios.post<RespuestaOpenAI>(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o-mini",
+        model: "gpt-3.5-turbo",
         messages: mensajesIA,
-  },
+      },
       {
         headers: {
           "Content-Type": "application/json",
@@ -42,10 +78,17 @@ export async function chatSupport(req: Request, res: Response) {
     const contenido =
       respuestaOpenAI.data.choices?.[0]?.message?.content || "Sin respuesta";
     return res.json({ respuesta: contenido });
-    } catch (error: any) {
-    console.error("Error en chatSupport:", error.response?.data || error);
-    return res
-      .status(500)
-      .json({ error: "Error al procesar la solicitud" });
+    } catch (error) {
+    const errorAxios = error as ErrorAxios<RespuestaErrorOpenAI>;
+    const estado = errorAxios.response?.status ?? 500;
+    const mensaje =
+      errorAxios.response?.data?.error?.message ||
+      errorAxios.message ||
+      "Error al procesar la solicitud";
+    console.error(
+      "Error en chatSupport:",
+      errorAxios.response?.data || errorAxios
+    );
+    return res.status(estado).json({ error: mensaje });
   }
 }
