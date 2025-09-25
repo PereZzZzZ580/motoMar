@@ -74,7 +74,7 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
       <div className="relative">
         <Link href={`/motos/${moto.id}`}>
           <Image
@@ -83,16 +83,16 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
             width={400}
             height={300}
             priority
-            className="w-full h-60 object-cover hover:scale-105 duration-300"
+            className="w-full h-60 object-cover hover:scale-105 duration-300 transition-transform"
           />
         </Link>  
         {/* Botón de favorito - SOLO VISUAL, manejado por Dashboard */}
         <button
           onClick={handleFavoriteClick}
-          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
+          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110"
         >
           <svg
-            className={`w-5 h-5 transition-colors ${
+            className={`w-5 h-5 transition-colors duration-300 ${
               moto.es_favorito 
                 ? 'text-red-500 fill-current' 
                 : 'text-gray-400 hover:text-red-400'
@@ -117,7 +117,7 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
       <div className="p-4">
         <Link href={`/motos/${moto.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors duration-300">
             {moto.titulo}
           </h3>
         </Link>

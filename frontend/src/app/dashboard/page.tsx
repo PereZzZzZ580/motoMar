@@ -1,11 +1,10 @@
- // src/app/dashboard/page.tsx
+// src/app/dashboard/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import MotoCard from '@/components/MotoCard';
 import toast from 'react-hot-toast';
-//import { Response } from 'express';
 
 interface Moto {
   id: string;
@@ -91,8 +90,6 @@ export default function DashboardPage() {
     }
   };
 
-  // se elimino la funcion handlesearch y se reemplazo por un useEffect que se ejecuta automáticamente
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchMotos();
@@ -114,7 +111,6 @@ export default function DashboardPage() {
   try {
     const Response = await api.post(`/motos/${motoId}/favorito`);
     
-    // Actualizar el estado local inmediatamente
     setMotos(prev => prev.map(moto => 
       moto.id === motoId 
         ? { 
@@ -148,7 +144,7 @@ export default function DashboardPage() {
         </h1>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-indigo-100 text-indigo-600">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -162,7 +158,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-green-100 text-green-600">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -176,7 +172,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,7 +186,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-6 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-purple-100 text-purple-600">
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,25 +210,25 @@ export default function DashboardPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por marca, modelo, ciudad..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 transition-all duration-300"
           />
           <button
             type="submit"
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105"
           >
             Buscar
           </button>
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105"
           >
             Filtros
           </button>
         </form>
 
         {/* Filtros expandibles */}
-        {showFilters && (
+        <div className={`transition-all duration-500 ease-in-out ${showFilters ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
           <div className="border-t pt-4 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
@@ -242,7 +238,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.marca || ''}
                   onChange={(e) => handleFilterChange({ marca: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 >
                   <option value="">Todas las marcas</option>
                   <option value="Honda">Honda</option>
@@ -264,7 +260,7 @@ export default function DashboardPage() {
                   value={filters.precioMin || ''}
                   onChange={(e) => handleFilterChange({ precioMin: parseInt(e.target.value) })}
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 />
               </div>
 
@@ -277,7 +273,7 @@ export default function DashboardPage() {
                   value={filters.precioMax || ''}
                   onChange={(e) => handleFilterChange({ precioMax: parseInt(e.target.value) })}
                   placeholder="50000000"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 />
               </div>
 
@@ -290,7 +286,7 @@ export default function DashboardPage() {
                   value={filters.ciudad || ''}
                   onChange={(e) => handleFilterChange({ ciudad: e.target.value })}
                   placeholder="Ej: Armenia"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 />
               </div>
 
@@ -301,7 +297,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.departamento || ''}
                   onChange={(e) => handleFilterChange({ departamento: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 >
                   <option value="">Todos los departamentos</option>
                   <option value="Antioquia">Antioquia</option>
@@ -321,7 +317,7 @@ export default function DashboardPage() {
                 <select
                   value={filters.ordenPor || ''}
                   onChange={(e) => handleFilterChange({ ordenPor: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
                 >
                   <option value="">Más recientes</option>
                   <option value="precio_asc">Precio: Menor a Mayor</option>
@@ -335,7 +331,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-300 transform hover:scale-105"
                 >
                   Limpiar filtros
                 </button>
@@ -345,7 +341,7 @@ export default function DashboardPage() {
               {motos.length} motos encontradas
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Grid de motos */}

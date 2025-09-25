@@ -88,7 +88,7 @@ export default function MisMotosPage() {
           <button
             key={e}
             onClick={() => setFiltro(e)}
-            className={`px-3 py-1 rounded-full border ${
+            className={`px-3 py-1 rounded-full border transition-all duration-300 transform hover:scale-105 ${
               filtro === e ? 'bg-black text-white' : 'bg-white text-black'
             }`}
           >
@@ -103,7 +103,7 @@ export default function MisMotosPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {motosFiltradas.map((moto) => (
-            <div key={moto.id} className="relative group">
+            <div key={moto.id} className="relative group bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
               <Link href={`/dashboard/mis-motos/${moto.id}`}>
                 {moto.imagenPrincipal ? (
                   <Image
@@ -111,7 +111,7 @@ export default function MisMotosPage() {
                     alt={moto.titulo}
                     width={400}
                     height={300}
-                    className="object-cover w-full h-48"
+                    className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
                     priority
                   />
                 ) : (
@@ -120,7 +120,7 @@ export default function MisMotosPage() {
                   </div>
                 )}
                 <div className="p-4">
-                  <h3 className="text-lg text-gray-500 font-semibold">{moto.titulo}</h3>
+                  <h3 className="text-lg text-gray-500 font-semibold group-hover:text-indigo-600 transition-colors duration-300">{moto.titulo}</h3>
                   <p className="text-green-600 font-bold">
                     ${moto.precio.toLocaleString()}
                   </p>
@@ -128,7 +128,7 @@ export default function MisMotosPage() {
               </Link>
               <button
                 onClick={() => handleDelete(moto.id)}
-                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform hover:scale-110"
               >
                 Eliminar
               </button>
