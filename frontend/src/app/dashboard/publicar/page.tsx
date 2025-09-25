@@ -29,6 +29,7 @@ interface FormData {
   whatsapp: string;
   acepta_permutas: boolean;
   precio_negociable: boolean;
+  acepta_politica: boolean;
 }
 
 const marcasPopulares = [
@@ -67,7 +68,8 @@ export default function PublicarMotoPage() {
     direccion_aproximada: '',
     whatsapp: '',
     acepta_permutas: false,
-    precio_negociable: true
+    precio_negociable: true,
+    acepta_politica: false, 
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -122,14 +124,20 @@ export default function PublicarMotoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+     if (!formData.acepta_politica) {
+      toast.error('Debes aceptar la política de tratamiento de datos');
+      return;
+    }
     if (images.length === 0) {
       toast.error('Debes subir al menos una imagen');
       return;
     }
 
     // 1) Crear la moto sin imágenes
+    const { acepta_politica, ...rest } = formData;
+
     const motoData = {
-      ...formData,
+      ...rest,
       precio: parseFloat(formData.precio),
       año: parseInt(formData.año),
       cilindraje: parseInt(formData.cilindraje),
@@ -196,7 +204,7 @@ export default function PublicarMotoPage() {
             ))}
             
             {images.length < 10 && (
-              <label className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500 transition-all duration-300">
+              <label className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-indigo-500">
                 <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -232,7 +240,7 @@ export default function PublicarMotoPage() {
                 value={formData.titulo}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="Ej: Honda CB 190R 2022"
               />
             </div>
@@ -246,7 +254,7 @@ export default function PublicarMotoPage() {
                 value={formData.marca}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 <option value="">Selecciona una marca</option>
                 {marcasPopulares.map(marca => (
@@ -265,7 +273,7 @@ export default function PublicarMotoPage() {
                 value={formData.modelo}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="Ej: CB 190R"
               />
             </div>
@@ -282,7 +290,7 @@ export default function PublicarMotoPage() {
                 required
                 min="1900"
                 max={new Date().getFullYear() + 1}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               />
             </div>
 
@@ -297,7 +305,7 @@ export default function PublicarMotoPage() {
                 onChange={handleInputChange}
                 required
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="8500000"
               />
             </div>
@@ -312,7 +320,7 @@ export default function PublicarMotoPage() {
                 onChange={handleInputChange}
                 required
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="Describe el estado de la moto, características especiales, razón de venta, etc."
               />
             </div>
@@ -335,7 +343,7 @@ export default function PublicarMotoPage() {
                 onChange={handleInputChange}
                 required
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="190"
               />
             </div>
@@ -351,7 +359,7 @@ export default function PublicarMotoPage() {
                 onChange={handleInputChange}
                 required
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="5000"
               />
             </div>
@@ -366,7 +374,7 @@ export default function PublicarMotoPage() {
                 value={formData.color}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="Rojo"
               />
             </div>
@@ -379,7 +387,7 @@ export default function PublicarMotoPage() {
                 name="tipo_motor"
                 value={formData.tipo_motor}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 {tiposMotor.map(tipo => (
                   <option key={tipo} value={tipo}>{tipo}</option>
@@ -395,7 +403,7 @@ export default function PublicarMotoPage() {
                 name="transmision"
                 value={formData.transmision}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 {tiposTransmision.map(tipo => (
                   <option key={tipo} value={tipo}>
@@ -413,7 +421,7 @@ export default function PublicarMotoPage() {
                 name="combustible"
                 value={formData.combustible}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               >
                 {tiposCombustible.map(tipo => (
                   <option key={tipo} value={tipo}>
@@ -440,7 +448,7 @@ export default function PublicarMotoPage() {
                 value={formData.placa_termina_en}
                 onChange={handleInputChange}
                 maxLength={1}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="5"
               />
             </div>
@@ -454,7 +462,7 @@ export default function PublicarMotoPage() {
                 name="soat_hasta"
                 value={formData.soat_hasta}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               />
             </div>
 
@@ -467,7 +475,7 @@ export default function PublicarMotoPage() {
                 name="tecnomecanica_hasta"
                 value={formData.tecnomecanica_hasta}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               />
             </div>
           </div>
@@ -488,7 +496,7 @@ export default function PublicarMotoPage() {
                 value={formData.ciudad}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               />
             </div>
 
@@ -502,7 +510,7 @@ export default function PublicarMotoPage() {
                 value={formData.departamento}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
               />
             </div>
 
@@ -515,7 +523,7 @@ export default function PublicarMotoPage() {
                 name="direccion_aproximada"
                 value={formData.direccion_aproximada}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="Ej: Cerca al Centro Comercial Calima"
               />
             </div>
@@ -529,7 +537,7 @@ export default function PublicarMotoPage() {
                 name="whatsapp"
                 value={formData.whatsapp}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900 transition-all duration-300 hover:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-gray-900"
                 placeholder="3001234567"
               />
             </div>
@@ -542,7 +550,7 @@ export default function PublicarMotoPage() {
                 name="acepta_permutas"
                 checked={formData.acepta_permutas}
                 onChange={handleInputChange}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-110"
+                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Acepto permutas
@@ -555,10 +563,27 @@ export default function PublicarMotoPage() {
                 name="precio_negociable"
                 checked={formData.precio_negociable}
                 onChange={handleInputChange}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-110"
+                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
               <span className="ml-2 text-sm text-gray-700">
                 Precio negociable
+              </span>
+            </label>
+
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="acepta_politica"
+                checked={formData.acepta_politica}
+                onChange={handleInputChange}
+                className="rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+                required
+              />
+              <span className="ml-2 text-sm text-gray-700">
+                He leído y acepto la{' '}
+                <a href="/politica-tratamiento-datos.html" className="text-blue-700 hover:text-blue-800">
+                  Política de Tratamiento de Datos
+                </a>
               </span>
             </label>
           </div>
@@ -576,7 +601,7 @@ export default function PublicarMotoPage() {
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Publicando...' : 'Publicar Moto'}
           </button>

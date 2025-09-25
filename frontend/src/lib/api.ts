@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 // Configuración base de la API
-const API_BASE_URL = 'http://localhost:3001/api';
-
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = baseURL.endsWith('/api') ? baseURL : `${baseURL}/api`;
 // Crear instancia de axios
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -47,6 +47,8 @@ export interface User {
   departamento?: string;
   emailVerificado: boolean;
   calificacion: number;
+  politicaAceptada: boolean;
+  politicaAceptadaAt?: string;
   createdAt: string;
 }
 
@@ -101,6 +103,7 @@ export const authAPI = {
     telefono?: string;
     ciudad?: string;
     departamento?: string;
+    aceptaPolitica: boolean; 
   }): Promise<AuthResponse> => {
     const response = await api.post('/auth/register', userData);
     return response.data;
@@ -199,6 +202,12 @@ export const motosAPI = {
     return response.data;
   },
 
+   // Marcar moto como vendida
+  marcarVendida: async (motoId: string) => {
+    const response = await api.patch(`/motos/${motoId}/vender`);
+    return response.data;
+  },
+  
   // Obtener estadísticas
   getEstadisticas: async () => {
     const response = await api.get('/motos/search/estadisticas');

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { authAPI, auth } from '@/lib/api';
 
 interface AuthFormProps {
@@ -12,6 +13,8 @@ export default function AuthForm({ type }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [registroExitoso, setRegistroExitoso] = useState(false);
+  const [aceptaPolitica, setAceptaPolitica] = useState(false);
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -53,9 +56,9 @@ export default function AuthForm({ type }: AuthFormProps) {
         
         setSuccess('¡Login exitoso! Redirigiendo...');
         
-        // Redirigir al dashboard
+        // Redirigir al inicio
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = '/';
         }, 1500);
 
       } else {
@@ -67,20 +70,16 @@ export default function AuthForm({ type }: AuthFormProps) {
           apellido: formData.apellido,
           telefono: formData.telefono || undefined,
           ciudad: formData.ciudad || undefined,
-          departamento: formData.departamento || undefined
+          departamento: formData.departamento || undefined,
+          aceptaPolitica: aceptaPolitica
         });
 
         // Guardar token y usuario
         auth.setAuth(response.auth.token, response.user);
         
-        setSuccess('¡Registro exitoso! Redirigiendo...');
-        
-        // Redirigir al dashboard
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 1500);
+        setSuccess('¡Registro exitoso!');
+        setRegistroExitoso(true);
       }
-
     }  catch (err) {
   console.error('Error en autenticación:', err);
   
@@ -105,14 +104,20 @@ export default function AuthForm({ type }: AuthFormProps) {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || '';
+    const redirectURL = baseURL ? `${baseURL}/api/auth/google` : '/api/auth/google';
+    window.location.href = redirectURL;
+  };
+
   const isLogin = type === 'login';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="text-4xl font-bold text-indigo-600 mb-2">
+          <div className="text-4xl font-bold text-blue-700 mb-2">
             🏍️ MotoMar
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
@@ -128,6 +133,19 @@ export default function AuthForm({ type }: AuthFormProps) {
 
         {/* Formulario */}
         <div className="bg-white p-8 rounded-xl shadow-lg">
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full mb-6 py-3 px-4 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          >
+            <svg className="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+              <path fill="#EA4335" d="M488 261.8c0-17.8-1.6-35-4.6-51.8H249v98h136.8c-5.9 32.2-23.5 59.5-50.2 77.8v64h81.3c47.5-43.7 74.9-108.1 74.9-188z"/>
+              <path fill="#34A853" d="M249 512c67.5 0 124.3-22.3 165.7-60.7l-81.3-64c-23.1 15.6-52.6 24.6-84.4 24.6-65 0-120-43.9-139.7-102.7H24.1v64.6C65.3 466.4 149.3 512 249 512z"/>
+              <path fill="#4A90E2" d="M109.3 308.3C98.1 274.5 98.1 237.5 109.3 203.7V139h-85.2C8.5 185.9 0 241.6 0 256s8.5 70.1 24.1 117l85.2-64.7z"/>
+              <path fill="#FBBC05" d="M249 100.1c35.4 0 67.1 12.2 92.2 32.3l69.1-69.1C360 24.3 305.5 0 249 0 149.3 0 65.3 45.6 24.1 117l85.2 64.7C129 144 184 100.1 249 100.1z"/>
+            </svg>
+            Continuar con Google
+          </button>
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Nombre y Apellido (solo registro) */}
@@ -144,7 +162,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     required={!isLogin}
                     value={formData.nombre}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="Tu nombre"
                   />
                 </div>
@@ -159,7 +177,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                     required={!isLogin}
                     value={formData.apellido}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="Tu apellido"
                   />
                 </div>
@@ -178,7 +196,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder="tu@email.com"
               />
             </div>
@@ -195,7 +213,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder={isLogin ? "Tu contraseña" : "Mínimo 8 caracteres"}
               />
               {!isLogin && (
@@ -218,9 +236,12 @@ export default function AuthForm({ type }: AuthFormProps) {
                     type="tel"
                     value={formData.telefono}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     placeholder="3001234567"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este número se usará para contactar por WhatsApp a los compradores.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -234,7 +255,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                       type="text"
                       value={formData.ciudad}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                       placeholder="Armenia"
                     />
                   </div>
@@ -247,7 +268,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                       name="departamento"
                       value={formData.departamento}
                       onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
                     >
                       <option value="">Seleccionar</option>
                       <option value="Antioquia">Antioquia</option>
@@ -274,11 +295,41 @@ export default function AuthForm({ type }: AuthFormProps) {
             )}
 
             {success && (
-              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                {success}
+               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg space-y-2">
+                <div>{success}</div>
+                {registroExitoso && (
+                  <div className="flex justify-center space-x-4">
+                    <Link href="/" className="text-blue-700 hover:text-blue-800 font-medium">
+                      Ir a Inicio
+                    </Link>
+                    <span>|</span>
+                    <Link href="/" className="text-blue-700 hover:text-blue-800 font-medium">
+                      Ir al Inicio
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
 
+            {/* Aceptar política de datos (solo registro) */}
+            {!isLogin && (
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  required
+                  checked={aceptaPolitica}
+                  onChange={(e) => setAceptaPolitica(e.target.checked)}
+                  className="rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+                />
+                <span className="ml-2 text-sm text-gray-700">
+                  He leído y acepto la{' '}
+                  <a href="/politica-tratamiento-datos.html" className="text-blue-700 hover:text-blue-800">
+                    Política de Tratamiento de Datos
+                  </a>
+                </span>
+              </label>
+            )}
+            
             {/* Botón submit */}
             <button
               type="submit"
@@ -286,7 +337,7 @@ export default function AuthForm({ type }: AuthFormProps) {
               className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800'
+                  : 'bg-blue-700 hover:bg-blue-800 active:bg-blue-900'
               }`}
             >
               {loading ? (
@@ -308,7 +359,7 @@ export default function AuthForm({ type }: AuthFormProps) {
                 {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}
                 <a
                   href={isLogin ? '/auth/register' : '/auth/login'}
-                  className="ml-2 text-indigo-600 hover:text-indigo-700 font-medium"
+                  className="ml-2 text-blue-700 hover:text-blue-800 font-medium"
                 >
                   {isLogin ? 'Regístrate aquí' : 'Inicia sesión'}
                 </a>
@@ -320,11 +371,11 @@ export default function AuthForm({ type }: AuthFormProps) {
         {/* Footer */}
         <div className="text-center text-sm text-gray-500">
           Al continuar, aceptas nuestros{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">
+          <a href="#" className="text-blue-700 hover:text-blue-800">
             Términos de Uso
           </a>{' '}
           y{' '}
-          <a href="#" className="text-indigo-600 hover:text-indigo-700">
+          <a href="#" className="text-blue-700 hover:text-blue-800">
             Política de Privacidad
           </a>
         </div>

@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { register, login, getProfile, logout, validateToken } from '../controllers/auth';
 import { authenticateToken } from '../middleware/auth';
+import { googleAuthRedirect, googleAuthCallback } from '../controllers/googleAuths';
 
 const router = Router();
 
@@ -20,6 +21,18 @@ router.post('/register', register);
  * Iniciar sesión
  */
 router.post('/login', login);
+
+/**
+ * GET /api/auth/google
+ * Redirigir a Google OAuth
+ */
+router.get('/google', googleAuthRedirect);
+
+/**
+ * GET /api/auth/google/callback
+ * Manejar respuesta de Google
+ */
+router.get('/google/callback', googleAuthCallback);
 
 // =================================
 // RUTAS PROTEGIDAS (REQUIEREN AUTENTICACIÓN)

@@ -2,7 +2,10 @@
 import { Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { hashPassword, comparePassword, validatePasswordStrength } from '../utils/bcrypt';
-import { generateTokenResponse, JWTPayload } from '../utils/jwt';
+import { generateTokenResponse } from '../utils/jwt';
+import type { JWTPayload } from '../utils/jwt';
+import { sendWelcomeEmail, sendLoginEmail } from '../utils/email';
+
 
 // Interfaces para request bodies
 interface RegisterRequest {
@@ -11,8 +14,9 @@ interface RegisterRequest {
   nombre: string;
   apellido: string;
   telefono?: string;
-  ciudad?: string;
+   ciudad?: string;
   departamento?: string;
+  aceptaPolitica?: boolean; 
 }
 
 interface LoginRequest {
@@ -32,7 +36,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       apellido,
       telefono,
       ciudad,
-      departamento
+      departamento,
+      aceptaPolitica
     }: RegisterRequest = req.body;
 
     // Validación básica
@@ -45,6 +50,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    if (!aceptaPolitica) {
+      res.status(400).json({
+        error: 'Política de tratamiento de datos no aceptada',
+        message: 'Debes aceptar la política de tratamiento de datos para registrarte',
+      });
+      return;
+    }
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -101,6 +113,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         ciudad: ciudad?.trim(),
         departamento: departamento?.trim(),
         emailVerificado: false, // En producción enviar email de verificación
+        politicaAceptada: aceptaPolitica,
+        politicaAceptadaAt: new Date(), // Guardar fecha de aceptación
         activo: true
       }
     });
@@ -116,6 +130,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const tokenResponse = generateTokenResponse(tokenPayload);
 
+    // Enviar email de bienvenida (mejor no bloquear el registro en caso de fallo)
+    sendWelcomeEmail(newUser.email, newUser.nombre).catch((err) => {
+      console.error('❌ Error al enviar email de bienvenida:', err);
+    });                      
+
     // Respuesta exitosa (sin la contraseña)
     res.status(201).json({
       message: 'Usuario registrado exitosamente',
@@ -129,6 +148,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         departamento: newUser.departamento,
         emailVerificado: newUser.emailVerificado,
         calificacion: newUser.calificacion,
+        politicaAceptada: newUser.politicaAceptada,
+        politicaAceptadaAt: newUser.politicaAceptadaAt,
         createdAt: newUser.createdAt
       },
       auth: tokenResponse,
@@ -214,6 +235,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const tokenResponse = generateTokenResponse(tokenPayload);
 
+    // Enviar notificacion de inicio de sesion 
+    sendLoginEmail(user.email, user.nombre).catch((err: any) => {
+      console.error('❌ Error al enviar email de inicio de sesión:', err);
+    });
+    
     // Respuesta exitosa
     res.json({
       message: 'Login exitoso',

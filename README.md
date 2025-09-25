@@ -13,10 +13,13 @@ Deploy: Vercel + Railway
 ✅ Validación automática de documentos RUNT
 ✅ Sistema de reputación y calificaciones
 ✅ Pagos seguros con escrow
+✅ Inicio de sesión con Google
+Para más detalles sobre qué datos recolectamos y cómo los tratamos, consulta [docs/legal/recoleccion_datos.md](docs/legal/recoleccion_datos.md) y nuestra [política de tratamiento de datos](docs/legal/politica_datos.md).
 🏍️ Gestión de Motos
 ✅ Publicación con fotos múltiples
 ✅ Búsqueda avanzada con filtros
-✅ Tasación automática con IA
+✅ Marcar motos como vendidas
+✅ Tansacción automática con IA
 ✅ Historial de mantenimiento
 💬 Comunicación
 ✅ Chat en tiempo real
@@ -48,7 +51,7 @@ Fase 1 - MVP (4 meses) 🔄
 Fase 2 - Escalamiento (8 meses) 📋
  App móvil React Native
  Integración RUNT completa
- IA para tasación
+ IA para transacción
  Sistema de reputación
  Panel administrativo
 Fase 3 - Empresa (12 meses) 🚀
@@ -65,7 +68,7 @@ VS Code
 Instalación
 bash
 # Clonar repositorio
-git clone https://github.com/tuusuario/motomar.git
+git clone https://github.com/PereZzZzZ580/motomar.git
 cd motomar
 
 # Instalar dependencias
@@ -86,7 +89,9 @@ npm run dev              # Ejecutar frontend + backend
 npm run dev:frontend     # Solo frontend (puerto 3000)
 npm run dev:backend      # Solo backend (puerto 3001)
 npm run build           # Build para producción
+npm run lint            # Linter del frontend (Next.js)
 npm run test            # Ejecutar tests
+# Próximamente: script de lint para el backend
 🌐 Deploy
 Frontend (Vercel)
 URL Producción: https://motomar.vercel.app

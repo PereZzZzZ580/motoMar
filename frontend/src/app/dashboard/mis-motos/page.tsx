@@ -25,7 +25,6 @@ export default function MisMotosPage() {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState<Filtro>('TODAS');
 
-  const API = process.env.NEXT_PUBLIC_API_URL || '';
 
   // ─── 1) Traer SOLO con getMisMotos(), sin llamadas extra que fallen ─────────
   const fetchMotos = async () => {
@@ -80,7 +79,7 @@ export default function MisMotosPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl text-gray-500 font-bold mb-4">Mis Motos</h1>
+      <h1 className="text-3xl text-gray-700 font-bold mb-4">Mis Motos</h1>
 
       {/* Filtros */}
       <div className="flex gap-2 mb-6">
@@ -103,15 +102,15 @@ export default function MisMotosPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {motosFiltradas.map((moto) => (
-            <div key={moto.id} className="relative group bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+            <div key={moto.id} className="relative group">
               <Link href={`/dashboard/mis-motos/${moto.id}`}>
                 {moto.imagenPrincipal ? (
                   <Image
-                    src={`${API}/uploads/${moto.imagenPrincipal}`}
+                    src={moto.imagenPrincipal}
                     alt={moto.titulo}
                     width={400}
                     height={300}
-                    className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover w-full h-48"
                     priority
                   />
                 ) : (

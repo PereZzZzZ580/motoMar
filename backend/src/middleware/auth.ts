@@ -1,6 +1,7 @@
  // src/middleware/auth.ts
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken, extractTokenFromHeader, JWTPayload } from '../utils/jwt';
+import { verifyToken, extractTokenFromHeader } from '../utils/jwt';
+import type { JWTPayload } from '../utils/jwt';
 import { prisma } from '../config/database';
 
 // Extender el tipo Request para incluir user

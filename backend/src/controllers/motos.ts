@@ -1,6 +1,7 @@
  // src/controllers/motos.ts
-import { Request, Response } from 'express';
+import { Request, Response , NextFunction} from 'express';
 import { prisma } from '../config/database';
+import { z } from 'zod';
 
 // Interfaces para request bodies
 interface CreateMotoRequest {
@@ -52,6 +53,40 @@ interface SearchFilters {
   papalesAlDia?: boolean;
   query?: string; // Búsqueda por texto
 }
+
+const motoSchema = z.object({
+   titulo: z.string().min(2),
+  descripcion: z.string().min(20),
+  precio: z.coerce.number().positive(),
+  negociable: z.boolean().default(true),
+
+  marca: z.string().min(2),
+  modelo: z.string().min(1),
+  año: z.coerce.number().int()
+    .gte(1950)
+    .lte(new Date().getFullYear() + 1),
+  cilindraje: z.coerce.number().int().positive(),
+  kilometraje: z.coerce.number().int().nonnegative(),
+  color: z.string().min(2),
+  combustible: z.enum(['GASOLINA','ELECTRICA','HIBRIDA']).default('GASOLINA'),
+  transmision: z.enum(['MANUAL','AUTOMATICA','SEMI_AUTOMATICA']).default('MANUAL'),
+  estado: z.enum(['NUEVA','USADO','PARA_REPUESTOS']).default('USADO'),
+  condicion: z.enum(['EXCELENTE','MUY_BUENA','BUENA','REGULAR','NECESITA_REPARACION']).default('BUENA'),
+
+  soatVigente: z.boolean().default(false),
+  tecnoVigente: z.boolean().default(false),
+  papalesAlDia: z.boolean().default(false),
+  frenos: z.enum(['DISCO','TAMBOR','MIXTO','ABS','CBS']).optional(),
+  llantas: z.enum(['NUEVAS','BUENAS','REGULARES','NECESITAN_CAMBIO']).optional(),
+  mantenimiento: z.string().optional(),
+  accesorios: z.string().optional(),
+
+  ciudad: z.string().min(2),
+  departamento: z.string().min(2),
+  barrio: z.string().optional(),
+
+  imagenes: z.array(z.string().url()).optional(),
+});
 
 // =================================
 // CREAR NUEVA MOTO
@@ -226,36 +261,61 @@ export const createMoto = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const uploadMotoImages = async (req: Request, res: Response): Promise<void> => {
-  console.log('Subiendo imágenes para moto:', req.params.id);
-  console.log('Archivos recibidos:', req.files);
+  export const uploadMotoImages = async (
+  req: Request,
+  res: Response,
+  next?: NextFunction
+): Promise<void> => {
+
   try {
     const motoId = req.params.id;
-    // multer-storage-cloudinary expone la URL pública en file.path
+
     const files = req.files as Express.Multer.File[];
+
     if (!files || files.length === 0) {
       res.status(400).json({ error: 'No se recibieron imágenes' });
       return;
     }
+
+    const moto = await prisma.moto.findUnique ({ where : { id : motoId } });
+ 
+    if (!moto) {
+      res. status ( 404 ). json ( { error : 'Motorcycle not found' });
+      return;
+    }
+    const existing = await prisma.imagenMoto.count({ where: { motoId } });
+
 
     const imagenes = await Promise.all(
       files.map((file, idx) =>
         prisma.imagenMoto.create({
           data: {
             motoId,
-            url:   file.path,           // URL pública de Cloudinary
-            alt:   file.originalname,
-            orden: idx + 1,
+            url: file.path,
+            alt: `${moto.marca} ${moto.modelo} - Imagen ${existing + idx + 1}`,
+            orden: existing + idx,
           },
         })
       )
     );
 
-    res.status(201).json(imagenes);
+     if (!moto.imagenPrincipal && imagenes. length > 0 )
+ {
+      await prisma.moto.update({
+        where: { id: motoId },
+        data : { imagenPrincipal : imagenes[ 0 ]. url },
+      });
+    }
+
+    res.status(201).json({
+      message : '🖼️ Images uploaded successfully' ,
+      imagenes,
+    });
+
   } catch (error) {
     console.error('❌ Error subiendo imágenes:', error);
     res.status(500).json({
-      error:   'Error interno',
+      error:'Error interno',
       message: 'No se pudieron subir las imágenes',
     });
   }
@@ -476,6 +536,7 @@ export const getMotoById = async (req: Request, res: Response): Promise<void> =>
             id: true,
             nombre: true,
             apellido: true,
+            telefono : true,
             calificacion: true,
             totalVentas: true,
             ciudad: true,
@@ -746,6 +807,11 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
         updatedAt: new Date()
       }
     });
+  
+    // Eliminar de favoritos todas las refencias a esta moto
+    await prisma.favoritoMoto.deleteMany({
+      where: { motoId: id }
+    });
 
     res.json({
       message: 'Moto eliminada exitosamente',
@@ -757,6 +823,65 @@ export const deleteMoto = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({
       error: 'Error interno del servidor',
       message: 'Ocurrió un error al eliminar la moto'
+    });
+  }
+};
+
+// =================================
+// MARCAR MOTO COMO VENDIDA
+// =================================
+export const marcarVendida = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!req.userId) {
+      res.status(401).json({
+        error: 'No autenticado',
+        message: 'Debes iniciar sesión',
+      });
+      return;
+    }
+
+    const moto = await prisma.moto.findUnique({ where: { id } });
+
+    if (!moto) {
+      res.status(404).json({ error: 'Moto no encontrada' });
+      return;
+    }
+
+    if (moto.vendedorId !== req.userId) {
+      res.status(403).json({
+        error: 'Sin permisos',
+        message: 'Solo puedes modificar tus propias motos',
+      });
+      return;
+    }
+
+    if (moto.vendida) {
+      res.status(400).json({ message: 'La moto ya está marcada como vendida' });
+      return;
+    }
+
+    await prisma.moto.update({
+      where: { id },
+      data: {
+        vendida: true,
+        activa: false,
+        updatedAt: new Date(),
+      },
+    });
+
+    await prisma.usuario.update({
+      where: { id: req.userId },
+      data: { totalVentas: { increment: 1 } },
+    });
+
+    res.json({ message: 'Moto marcada como vendida' });
+
+  } catch (error) {
+    console.error('❌ Error marcando moto como vendida:', error);
+    res.status(500).json({
+      error: 'Error interno del servidor',
     });
   }
 };
@@ -809,5 +934,6 @@ export default {
   getMisMotos,
   updateMoto,
   deleteMoto,
+  marcarVendida,
   uploadMotoImages,
 };

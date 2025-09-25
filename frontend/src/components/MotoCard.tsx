@@ -23,7 +23,7 @@ interface Moto {
   vendedor?: {
     nombre: string;
     apellido: string;
-    calificacion_promedio: number;
+    calificacion: number;
   };
   _count?: {
     favoritos: number;
@@ -36,6 +36,7 @@ interface MotoCardProps {
   onFavoriteToggle?: (motoId: string) => void;
 }
 
+// Componente MotoCard para mostrar información de una moto
 export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault(); // Evitar navegación
@@ -64,14 +65,18 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   };
 
   
+// Usar la primera imagen disponible o una imagen por defecto
+  let thumbnail =
+    moto.imagenes?.[0]?.url ?? moto.imagenPrincipal ?? '/no-image.png';
 
-  const API = process.env.NEXT_PUBLIC_API_URL;
-  const thumbnail = moto.imagenes[0]
-    ? `${API}/uploads/${moto.imagenes[0].url}`
-    : moto.imagenPrincipal
-      ? `${API}/uploads/${moto.imagenPrincipal}`
-    : '/no-image.png'; // Placeholder local
-
+  // Normalizar para next/image: debe iniciar con http(s) o '/'
+  if (
+    thumbnail &&
+    !thumbnail.startsWith('http') &&
+    !thumbnail.startsWith('/')
+  ) {
+    thumbnail = `/uploads/${thumbnail}`;
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
@@ -117,12 +122,12 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
       <div className="p-4">
         <Link href={`/motos/${moto.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors duration-300">
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
             {moto.titulo}
           </h3>
         </Link>
         
-        <p className="text-2xl font-bold text-indigo-600 mt-2">
+        <p className="text-2xl font-bold text-blue-700 mt-2">
           {formatPrice(moto.precio)}
         </p>
 
@@ -145,14 +150,14 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
 
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
           <div className="flex items-center text-sm">
-            <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold text-xs">
+            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold text-xs">
               {moto.vendedor?.nombre?.charAt(0) || 'U'}
             </div>
             <span className="ml-2 text-gray-700">
               {moto.vendedor?.nombre || 'Usuario'} {moto.vendedor?.apellido || ''}
             </span>
             <span className="ml-2 text-yellow-500">
-              ⭐ {moto.vendedor?.calificacion_promedio?.toFixed(1) || '0.0'}
+              ⭐ {moto.vendedor?.calificacion?.toFixed(1) || '0.0'}
             </span>
           </div>
           

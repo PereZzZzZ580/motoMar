@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "lint": "eslint 'src/**/*.{ts,js}'"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^4.18.1",
+    "googleapis": "^139.0.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
@@ -33,7 +35,8 @@
     "nodemailer": "^7.0.5",
     "path-to-regexp": "^6.2.1",
     "prisma": "^6.12.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "zod": "^4.0.10"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -43,6 +46,9 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^24.0.14",
     "@types/nodemailer": "^6.4.17",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "eslint": "^9.32.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

@@ -30,6 +30,7 @@ interface Moto {
     id: string;
     nombre: string;
     apellido: string;
+    telefono?: string;
     calificacion: number;
     totalVentas: number;
     ciudad: string;
@@ -54,9 +55,57 @@ export default function MotoDetallePage() {
   const [loading, setLoading] = useState(true);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const API = process.env.NEXT_PUBLIC_API_URL || '';
   const placeholder = 'https://images.unsplash.com/photo-…'; // Ruta al placeholder de imagen
   const motoId = params.id as string;
+
+   const contactarWhatsApp = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+      return;
+    }
+    if (moto?.vendedor?.telefono) {
+      window.open(`https://wa.me/${moto.vendedor.telefono}`, '_blank');
+    } else {
+      toast.error('El vendedor no ha registrado número de contacto');
+    }
+  };
+
+  const toggleFavorito = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+      return;
+    }
+    if (!moto) return;
+    try {
+      await api.post(`/motos/${moto.id}/favorito`);
+      setMoto({
+        ...moto,
+        esFavorito: !moto.esFavorito,
+        _count: {
+          ...moto._count,
+          favoritos: !moto.esFavorito
+            ? (moto._count?.favoritos || 0) + 1
+            : (moto._count?.favoritos || 0) - 1,
+        },
+      });
+      toast.success(!moto.esFavorito ? '¡Agregado a favoritos!' : 'Eliminado de favoritos');
+    } catch (err) {
+      console.error('Error al actualizar favorito:', err);
+      toast.error('Error al actualizar favorito');
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Debes iniciar sesión');
+      router.push('/auth/login');
+    }
+  }, []);
 
   useEffect(() => {
     if (motoId) {
@@ -92,7 +141,7 @@ export default function MotoDetallePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
           <p className="mt-4 text-gray-600">Cargando información de la moto...</p>
           <p className="text-sm text-gray-400">ID: {motoId}</p>
         </div>
@@ -108,10 +157,10 @@ export default function MotoDetallePage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Error al cargar la moto</h1>
           <p className="text-gray-600 mb-4">{error}</p>
           <Link
-            href="/dashboard"
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+            href="/"
+            className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors"
           >
-            Volver al Dashboard
+            Volver al Inicio
           </Link>
         </div>
       </div>
@@ -131,10 +180,10 @@ export default function MotoDetallePage() {
         {/* Header */}
         <div className="mb-6">
           <Link
-            href="/dashboard"
-            className="text-indigo-600 hover:text-indigo-800 flex items-center mb-4"
+            href="/"
+            className="text-blue-700 hover:text-blue-900 flex items-center mb-4"
           >
-            ← Volver al Dashboard
+            ← Volver al Inicio
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">{moto.titulo}</h1>
           <p className="text-gray-600">{moto.ciudad}, {moto.departamento}</p>
@@ -145,11 +194,7 @@ export default function MotoDetallePage() {
           {/* Imagen */}
           <div className="relative w-full h-96 bg-white rounded-lg shadow-md overflow-hidden">
             <Image
-              src={
-                currentImage?.url
-                  ? `${API}/uploads/${currentImage.url}`
-                  : placeholder
-              }
+              src={currentImage?.url  || placeholder}            
               alt={`${moto.titulo} imagen ${currentIdx + 1}`}
               fill       //cubre todo el contenedor
               style ={{ objectFit: 'cover' }}   // Mantiene la proporción de la imagen
@@ -223,7 +268,7 @@ export default function MotoDetallePage() {
               <div className="bg-white p-6  text-gray-500 rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold mb-4">Vendedor</h3>
                 <div className="flex items-center mb-2">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold">
                     {moto.vendedor.nombre.charAt(0)}
                   </div>
                   <div className="ml-3">
@@ -240,10 +285,16 @@ export default function MotoDetallePage() {
 
             {/* Botones de acción */}
             <div className="space-y-3">
-              <button className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+              <button
+                onClick={contactarWhatsApp}
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              >
                 💬 Contactar por WhatsApp
               </button>
-              <button className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
+                <button
+                onClick={toggleFavorito}
+                className="w-full bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+              >
                 ❤️ Agregar a Favoritos
               </button>
             </div>
