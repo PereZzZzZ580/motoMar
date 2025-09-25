@@ -4,6 +4,7 @@
 
 import { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export function Providers({ children }: { children: React.ReactNode }) {
  useEffect(() => {
@@ -13,7 +14,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <>
-      {children}
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.75 }}
+      >
+        {children}
+      </motion.main>
       <Toaster
         position="top-right"
         toastOptions={{

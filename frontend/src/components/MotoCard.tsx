@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface Moto {
   id: string;
@@ -79,7 +80,13 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+      className="bg-white rounded-lg shadow-md hover:shadow-xl overflow-hidden"
+    >
       <div className="relative">
         <Link href={`/motos/${moto.id}`}>
           <Image
@@ -174,6 +181,6 @@ export default function MotoCard({ moto, onFavoriteToggle }: MotoCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

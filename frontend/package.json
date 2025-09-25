@@ -13,6 +13,7 @@
     "@cloudinary/url-gen": "^1.21.0",
     "@headlessui/react": "^2.2.7",
     "axios": "^1.10.0",
+    "framer-motion": "^12.23.22",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^3.2.0",
     "motomar": "file:..",
@@ -30,8 +31,10 @@
     "@types/node": "^20.19.8",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
+    "postcss": "^8.5.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
